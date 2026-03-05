@@ -1,0 +1,2553 @@
+﻿=== C:\Users\Administrator\Documents\vs code\kepco-bid-app\public\css\style.css ===
+/* public/css/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg: #f4f1ec;
+  --bg2: #ece8e0;
+  --surface: #fff;
+  --border: #d8d3c8;
+  --border2: #bfb9ad;
+  --ink: #1a1814;
+  --ink2: #4a4540;
+  --ink3: #8a8070;
+  --red: #c0392b;
+  --blue: #1a5a8a;
+  --green: #1a7a3a;
+  --amber: #b5700a;
+  --mono: 'IBM Plex Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 31px, var(--border) 31px, var(--border) 32px);
+  opacity: .18;
+  pointer-events: none; z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 1020px; margin: 0 auto; padding: 0 18px 80px; }
+
+/* ? HEADER ? */
+header {
+  border-bottom: 3px solid var(--ink);
+  padding: 18px 0 12px;
+  margin-bottom: 24px;
+  text-align: center;
+  position: relative;
+}
+.hd-sub  { font-family: var(--mono); font-size: 10px; letter-spacing: 4px; color: var(--ink3); text-transform: uppercase; margin-bottom: 5px; }
+.hd-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; line-height: 1; margin-bottom: 5px; }
+.hd-title em { color: var(--red); font-style: normal; }
+.hd-line {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 10px; color: var(--ink3); margin-top: 8px;
+}
+.hd-line::before, .hd-line::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
+.server-badge {
+  position: absolute; top: 18px; right: 0;
+  font-family: var(--mono); font-size: 11px;
+  padding: 4px 10px; border-radius: 20px;
+  background: var(--bg2); border: 1px solid var(--border2); color: var(--ink3);
+}
+.server-badge.ok  { background: #e8f5ec; border-color: #8ec8a0; color: var(--green); }
+.server-badge.err { background: #fde8e8; border-color: #f0a0a0; color: var(--red); }
+
+/* ? TABS ? */
+.tabs { display: flex; margin-bottom: 20px; border: 1px solid var(--border2); border-radius: 8px; overflow: hidden; }
+.tab-btn {
+  flex: 1; padding: 11px; border: none; background: var(--bg2);
+  font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--ink3); cursor: pointer; transition: all .15s;
+  border-right: 1px solid var(--border2);
+}
+.tab-btn:last-child { border-right: none; }
+.tab-btn.active { background: var(--ink); color: #fff; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ? PANEL ? */
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+.panel-head {
+  background: var(--ink); color: #fff; padding: 9px 16px;
+  font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  font-family: var(--mono); display: flex; align-items: center; gap: 10px;
+}
+.panel-head .badge {
+  background: var(--red); color: #fff;
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.panel-body { padding: 18px; }
+
+/* ? FORM ? */
+.field { margin-bottom: 14px; }
+label { display: block; font-size: 12px; font-weight: 700; color: var(--ink2); margin-bottom: 5px; }
+input, select {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 5px; padding: 9px 12px; font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif; color: var(--ink);
+  outline: none; transition: border-color .15s;
+}
+input:focus, select:focus { border-color: var(--blue); background: #fff; }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* ? BUTTONS ? */
+.btn { padding: 10px 20px; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; transition: all .15s; }
+.btn-primary { background: var(--red); color: #fff; }
+.btn-primary:hover { background: #a93226; transform: translateY(-1px); box-shadow: 0 3px 12px rgba(192,57,43,.3); }
+.btn-secondary { background: var(--blue); color: #fff; }
+.btn-secondary:hover { background: #154878; }
+.btn-full { width: 100%; padding: 13px; font-size: 14px; }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* ? STATUS ? */
+.status-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;
+  font-family: var(--mono);
+}
+.status-bar.info    { background: #e8f0fa; border: 1px solid #b0c8e8; color: var(--blue); }
+.status-bar.warn    { background: #fff3e0; border: 1px solid #ffc57a; color: var(--amber); }
+.status-bar.error   { background: #fde8e8; border: 1px solid #f0a0a0; color: var(--red); }
+.status-bar.success { background: #e8f5ec; border: 1px solid #8ec8a0; color: var(--green); }
+.dot-spin { width: 10px; height: 10px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ? BID LIST ? */
+.bid-list { display: flex; flex-direction: column; gap: 8px; }
+.bid-card {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  padding: 14px; cursor: pointer; transition: all .15s;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+}
+.bid-card:hover { border-color: var(--blue); background: #fff; }
+.bid-card.selected { border-color: var(--red); border-width: 2px; background: #fff; }
+.bid-card-left { flex: 1; min-width: 0; }
+.bid-no    { font-family: var(--mono); font-size: 10px; color: var(--ink3); margin-bottom: 4px; }
+.bid-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; line-height: 1.4; }
+.bid-meta  { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.bid-tag   { font-size: 10px; padding: 2px 7px; border-radius: 3px; font-weight: 600; }
+.bid-tag-blue { background: #e8f0fa; color: var(--blue); }
+.bid-tag-red  { background: #fde8e8; color: var(--red); }
+.bid-tag-gray { background: var(--bg2); color: var(--ink3); }
+.bid-card-right { text-align: right; flex-shrink: 0; }
+.bid-price { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--ink); }
+.bid-date  { font-size: 11px; color: var(--ink3); margin-top: 3px; }
+
+/* ? PAGER ? */
+.pager { display: flex; gap: 6px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+.pager-btn {
+  width: 32px; height: 32px; border: 1px solid var(--border); background: var(--surface);
+  border-radius: 4px; font-size: 12px; cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+  color: var(--ink2); transition: all .15s; display: flex; align-items: center; justify-content: center;
+}
+.pager-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.pager-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+
+/* ? SPINNER ? */
+.spinner-wrap { text-align: center; padding: 40px; }
+.spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--red); border-radius: 50%; animation: spin .7s linear infinite; }
+
+/* ? ANALYSIS RESULTS ? */
+.verdict-bar {
+  background: var(--ink); color: #fff; border-radius: 8px; padding: 20px 22px;
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0;
+  align-items: center; margin-bottom: 16px;
+}
+.vd-item { padding: 0 16px; }
+.vd-item:first-child { padding-left: 0; }
+.vd-item:last-child  { padding-right: 0; text-align: right; }
+.vd-divider { width: 1px; background: rgba(255,255,255,.15); height: 50px; }
+.vd-label { font-size: 10px; letter-spacing: 2px; font-family: var(--mono); opacity: .5; margin-bottom: 5px; }
+.vd-val   { font-size: 24px; font-weight: 900; font-family: var(--mono); }
+.vd-sub   { font-size: 11px; opacity: .55; margin-top: 3px; }
+.vd-prob  { text-align: center; }
+.gauge-wrap { position: relative; display: inline-block; }
+.gauge-text-over {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.gauge-pct  { font-size: 20px; font-weight: 900; font-family: var(--mono); }
+.gauge-unit { font-size: 9px; opacity: .6; }
+
+.res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.res-box  { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.res-box-head { padding: 8px 14px; background: var(--bg2); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-family: var(--mono); color: var(--ink2); }
+.res-box-body { padding: 14px; }
+
+.prange { margin-bottom: 12px; }
+.prange-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.prange-lbl { font-size: 11px; color: var(--ink2); }
+.prange-v   { font-family: var(--mono); font-size: 12px; font-weight: 600; }
+.prange-bar { height: 5px; background: var(--bg2); border-radius: 3px; position: relative; margin-bottom: 2px; }
+.prange-fill { height: 100%; border-radius: 3px; position: absolute; }
+.prange-dot  { width: 9px; height: 9px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--border); position: absolute; top: 50%; transform: translate(-50%, -50%); }
+.prange-price { font-size: 10px; color: var(--ink3); font-family: var(--mono); }
+
+.info-tbl { width: 100%; font-size: 12px; border-collapse: collapse; }
+.info-tbl td { padding: 6px 0; border-bottom: 1px solid var(--bg2); vertical-align: top; }
+.info-tbl tr:last-child td { border-bottom: none; }
+.info-tbl .k { color: var(--ink3); width: 38%; }
+.info-tbl .v { font-weight: 600; font-family: var(--mono); font-size: 12px; word-break: break-all; }
+
+.strat-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--bg2); }
+.strat-item:last-child { border-bottom: none; padding-bottom: 0; }
+.strat-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.strat-head { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.strat-desc { font-size: 11px; color: var(--ink2); line-height: 1.65; }
+.tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; margin-left: 5px; }
+.tag-r { background: #fde8e8; color: var(--red); }
+.tag-b { background: #e8f0fa; color: var(--blue); }
+.tag-g { background: #e8f5ec; color: var(--green); }
+
+.disc { background: #fff9e6; border: 1px solid #f0d080; border-left: 4px solid var(--amber); border-radius: 5px; padding: 10px 14px; font-size: 11px; color: var(--ink2); line-height: 1.7; margin-top: 12px; font-family: var(--mono); }
+
+/* ? ANALYZE TRIGGER ? */
+.trigger-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; }
+.trigger-info { flex: 1; }
+.trigger-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.trigger-sub   { font-size: 11px; color: var(--ink3); }
+
+@media (max-width: 680px) {
+  .row2, .row3, .res-grid { grid-template-columns: 1fr; }
+  .verdict-bar { grid-template-columns: 1fr; }
+  .vd-divider { display: none; }
+  .hd-title { font-size: 24px; }
+  .bid-card { flex-direction: column; }
+  .server-badge { position: static; margin-top: 8px; display: inline-block; }
+}
+
+/* ?? ?곸꽭 紐⑤떖 ?? */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(26,24,20,.6);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeIn .15s ease;
+}
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 100%; max-width: 720px;
+  max-height: 88vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  animation: slideUp .2s ease;
+}
+@keyframes slideUp { from{transform:translateY(16px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+.modal-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.modal-head-text { flex: 1; min-width: 0; }
+.modal-no   { font-family: var(--mono); font-size: 11px; color: var(--ink3); margin-bottom: 4px; }
+.modal-title { font-size: 15px; font-weight: 800; line-height: 1.4; }
+.modal-close {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--bg);
+  cursor: pointer; font-size: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink3); transition: all .15s;
+}
+.modal-close:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+.modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+
+.modal-section { margin-bottom: 20px; }
+.modal-section-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; font-family: var(--mono);
+  color: var(--ink3); margin-bottom: 10px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--bg2);
+}
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.modal-field { background: var(--bg); border-radius: 6px; padding: 10px 12px; }
+.modal-field.full { grid-column: 1/-1; }
+.modal-field-label { font-size: 10px; color: var(--ink3); margin-bottom: 3px; }
+.modal-field-value {
+  font-size: 13px; font-weight: 600; font-family: var(--mono);
+  word-break: break-word; word-wrap: break-word; overflow-wrap: break-word;
+  white-space: pre-wrap; line-height: 1.6;
+}
+.modal-field-value.amount { color: var(--blue); font-size: 15px; white-space: normal; }
+.modal-field-value.date   { color: var(--ink2); white-space: normal; }
+.modal-field-value.empty  { color: var(--border2); font-weight: 400; }
+
+/* 湲??띿뒪???꾨뱶 (李멸??먭꺽 ?? */
+.modal-field.full .modal-field-value {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px; font-weight: 400;
+  line-height: 1.8; color: var(--ink2);
+  max-height: 200px; overflow-y: auto;
+  padding: 4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+.modal-field.full .modal-field-value::-webkit-scrollbar { width: 4px; }
+.modal-field.full .modal-field-value::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* 泥⑤??뚯씪 */
+.file-list { display: flex; flex-direction: column; gap: 6px; }
+.file-item {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 9px 12px;
+  text-decoration: none; color: var(--ink);
+  transition: all .15s;
+}
+.file-item:hover { border-color: var(--blue); background: #fff; color: var(--blue); }
+.file-icon { font-size: 14px; flex-shrink: 0; }
+.file-name { font-size: 12px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-arrow { font-size: 11px; color: var(--ink3); flex-shrink: 0; }
+
+.modal-foot {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px; justify-content: flex-end;
+}
+
+@media(max-width:600px) {
+  .modal-grid { grid-template-columns: 1fr; }
+  .modal-field.full { grid-column: 1; }
+}
+
+
+=== C:\Users\Administrator\Documents\vs code\kepco-bid-app\public\js\app.js ===
+// public/js/app.js
+
+const state = { bids: [], page: 1, perPage: 10, selected: null };
+
+// ?? INIT ??
+window.addEventListener('DOMContentLoaded', async () => {
+  const badge = document.getElementById('serverBadge');
+  try {
+    const res = await fetch('/api/debug');
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    badge.textContent = `???쒕쾭 ?곌껐??(理쒓렐 怨듦퀬 ${data.count}嫄?`;
+    badge.classList.add('ok');
+  } catch (e) {
+    badge.textContent = '???쒕쾭 ?ㅻ쪟: ' + e.message;
+    badge.classList.add('err');
+  }
+
+  // ?뚯궗 紐⑸줉 濡쒕뱶
+  try {
+    const res  = await fetch('/api/companies');
+    const data = await res.json();
+    const sel  = document.getElementById('q-company');
+    Object.entries(data).forEach(([id, name]) => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = name;
+      sel.appendChild(opt);
+    });
+  } catch {}
+});
+
+// ?? TABS ??
+function switchTab(name) {
+  ['search','analyze'].forEach((n, i) => {
+    document.querySelectorAll('.tab-btn')[i].classList.toggle('active', n === name);
+    document.getElementById('tab-' + n).classList.toggle('active', n === name);
+  });
+}
+
+// ?? STATUS ??
+function showStatus(id, type, msg, loading = false) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = `<div class="status-bar ${type}">
+    ${loading ? '<div class="dot-spin"></div>' : ''}<span>${msg}</span>
+  </div>`;
+}
+
+// ?? SEARCH ??
+async function searchBids() {
+  const keyword   = document.getElementById('q-keyword').value.trim() || '蹂댁삩';
+  const companyId = document.getElementById('q-company').value;
+  const days      = document.getElementById('q-days').value;
+
+  state.bids = []; state.page = 1; state.selected = null;
+  document.getElementById('analyze-trigger').style.display = 'none';
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-pager').innerHTML   = '';
+  showStatus('search-status', 'info', `"${keyword}" 議고쉶 以?..`, true);
+
+  const params = new URLSearchParams({ keyword, days });
+  if (companyId) params.set('companyId', companyId);
+
+  try {
+    const res  = await fetch(`/api/bids?${params}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '?쒕쾭 ?ㅻ쪟');
+
+    state.bids = data.items || [];
+
+    if (state.bids.length === 0) {
+      showStatus('search-status', 'info', `"${keyword}" 寃??寃곌낵媛 ?놁뒿?덈떎.`);
+      return;
+    }
+    showStatus('search-status', 'success', `珥?${data.total}嫄?議고쉶??);
+    renderBidPage();
+  } catch (err) {
+    showStatus('search-status', 'error', `?ㅻ쪟: ${err.message}`);
+  }
+}
+
+// ?? RENDER ??
+const SOURCE_COLOR = {
+  '?쒓뎅?⑤?諛쒖쟾': 'bid-tag-blue', '?쒓뎅?꾨젰怨듭궗': 'bid-tag-red',
+  '?쒓뎅?쒕?諛쒖쟾': 'bid-tag-gray', '?쒓뎅以묐?諛쒖쟾': 'bid-tag-gray',
+  '?쒓뎅?⑤룞諛쒖쟾': 'bid-tag-gray', '?쒓뎅?숈꽌諛쒖쟾': 'bid-tag-gray',
+};
+
+function renderBidPage() {
+  const { bids, page, perPage } = state;
+  const start = (page - 1) * perPage;
+  const slice = bids.slice(start, start + perPage);
+  const totalPages = Math.ceil(bids.length / perPage);
+
+  document.getElementById('search-results').innerHTML = `
+    <div class="bid-list">
+      ${slice.map((b, i) => `
+        <div class="bid-card" id="bid-${start+i}" onclick="selectBid(${start+i})">
+          <div class="bid-card-left">
+            <div class="bid-no">${b.no}</div>
+            <div class="bid-title">${b.title}</div>
+            <div class="bid-meta">
+              <span class="bid-tag ${SOURCE_COLOR[b.org] || 'bid-tag-gray'}">${b.org}</span>
+              ${b.type   ? `<span class="bid-tag bid-tag-gray">${b.type}</span>` : ''}
+              ${b.method ? `<span class="bid-tag bid-tag-gray">${b.method}</span>` : ''}
+              ${b.status ? `<span class="bid-tag ${b.status==='PreAttendProgress'?'bid-tag-blue':'bid-tag-gray'}">${statusLabel(b.status)}</span>` : ''}
+            </div>
+          </div>
+          <div class="bid-card-right">
+            <div class="bid-price">${b.budget ? fmtWon(b.budget) : '湲덉븸誘멸났媛?}</div>
+            <div class="bid-date">留덇컧 ${b.deadline}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+  document.getElementById('search-pager').innerHTML = totalPages > 1
+    ? `<div class="pager">${Array.from({length:totalPages},(_,i)=>i+1).map(p=>
+        `<button class="pager-btn ${p===page?'active':''}" onclick="goPage(${p})">${p}</button>`
+      ).join('')}</div>` : '';
+}
+
+function statusLabel(s) {
+  const map = { PreAttendProgress:'怨듦퀬吏꾪뻾', Close:'留덇컧', Fail:'?좎같', OpenTimed:'媛쒖같?湲?, Cancel:'痍⑥냼' };
+  return map[s] || s;
+}
+
+function goPage(p) { state.page = p; renderBidPage(); }
+
+function selectBid(idx) {
+  state.selected = state.bids[idx];
+  document.querySelectorAll('.bid-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('bid-'+idx)?.classList.add('selected');
+  openModal(state.selected);
+}
+
+// ?? ?곸꽭 紐⑤떖 ??
+function openModal(b) {
+  // 湲곗〈 紐⑤떖 ?쒓굅
+  document.getElementById('bid-modal')?.remove();
+
+  const fmtAmt = n => n > 0 ? fmtWon(n) : '-';
+  const empty  = v => (!v || v === '-') ? '<span class="empty">-</span>' : v;
+  const mono   = (v, cls='') => `<span class="modal-field-value ${cls} font-mono">${empty(v)}</span>`;
+
+  // 泥⑤??뚯씪 HTML
+  const filesHtml = b.files?.length
+    ? b.files.map(f => `
+        <a class="file-item" href="${f.url || '#'}" target="_blank" rel="noopener">
+          <span class="file-icon">?뱞</span>
+          <span class="file-name">${f.name}</span>
+          <span class="file-arrow">${f.url ? '?? : '留곹겕?놁쓬'}</span>
+        </a>`).join('')
+    : '<span style="font-size:12px;color:var(--ink3);">泥⑤??뚯씪 ?놁쓬</span>';
+
+  const html = `
+    <div class="modal-overlay" id="bid-modal" onclick="closeModalOutside(event)">
+      <div class="modal">
+        <div class="modal-head">
+          <div class="modal-head-text">
+            <div class="modal-no">${b.no} 쨌 ${b.org} 쨌 <span class="bid-tag ${b.status==='PreAttendProgress'?'bid-tag-blue':'bid-tag-gray'}" style="padding:1px 6px;">${statusLabel(b.status)}</span></div>
+            <div class="modal-title">${b.title}</div>
+          </div>
+          <button class="modal-close" onclick="closeModal()">??/button>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- 湲덉븸 -->
+          <div class="modal-section">
+            <div class="modal-section-title">?뮥 湲덉븸 ?뺣낫</div>
+            <div class="modal-grid">
+              <div class="modal-field">
+                <div class="modal-field-label">?꾧툒(?ъ젙)湲덉븸</div>
+                <div class="modal-field-value amount">${b.budget > 0 ? fmtWon(b.budget) : '-'}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">異붿젙湲덉븸</div>
+                <div class="modal-field-value amount">${fmtAmt(b.estimatedPrice)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">?ъ젙湲덉븸</div>
+                <div class="modal-field-value amount">${fmtAmt(b.assessmentAmount)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">?덈퉬媛寃?珥덇린湲덉븸</div>
+                <div class="modal-field-value amount">${fmtAmt(b.preBidPrice)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ?낆같 諛⑸쾿 -->
+          <div class="modal-section">
+            <div class="modal-section-title">?뱥 ?낆같 諛⑸쾿</div>
+            <div class="modal-grid">
+              <div class="modal-field">
+                <div class="modal-field-label">?숈같諛⑸쾿</div>
+                <div class="modal-field-value">${empty(b.competitionType)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">怨꾩빟諛⑸쾿 (?꾧툒援щ텇)</div>
+                <div class="modal-field-value">${empty(b.contractType)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">?낆같諛⑸쾿</div>
+                <div class="modal-field-value">${empty(b.openMethod)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">援щℓ?좏삎</div>
+                <div class="modal-field-value">${empty(b.purchaseType)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ?쇱젙 -->
+          <div class="modal-section">
+            <div class="modal-section-title">?뱟 ?쇱젙</div>
+            <div class="modal-grid">
+              <div class="modal-field">
+                <div class="modal-field-label">?낆같?좎껌 ?쒖옉?쇱떆</div>
+                <div class="modal-field-value date">${empty(b.bidBegin)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">?낆같?좎껌 留덇컧?쇱떆</div>
+                <div class="modal-field-value date">${empty(b.deadline)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">?⑷린??/div>
+                <div class="modal-field-value date">${empty(b.deliveryDueDate)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 李멸??먭꺽 -->
+          <div class="modal-section">
+            <div class="modal-section-title">??李멸??먭꺽</div>
+            <div class="modal-grid">
+              <div class="modal-field full">
+                <div class="modal-field-label">李멸??먭꺽 ?쒗븳</div>
+                <div class="modal-field-value">${empty(b.bidAttendRestrict)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 泥⑤??뚯씪 -->
+          <div class="modal-section">
+            <div class="modal-section-title">?뱨 泥⑤??뚯씪</div>
+            <div class="file-list">${filesHtml}</div>
+          </div>
+
+        </div>
+
+        <div class="modal-foot">
+          <button class="btn btn-secondary btn-sm" onclick="goAnalyzeFromModal()">?뱤 ?숈같 遺꾩꽍</button>
+          <button class="btn btn-sm" style="background:var(--bg2);border:1px solid var(--border2);" onclick="closeModal()">?リ린</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.body.insertAdjacentHTML('beforeend', html);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('bid-modal')?.remove();
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target.id === 'bid-modal') closeModal();
+}
+
+function goAnalyzeFromModal() {
+  closeModal();
+  goAnalyze();
+}
+
+function goAnalyze() {
+  if (!state.selected) return;
+  const b = state.selected;
+  document.getElementById('a-title').value  = b.title;
+  document.getElementById('a-budget').value = b.budget ? b.budget.toLocaleString() : '';
+  document.getElementById('a-org').value    = b.org;
+  if (b.type?.includes('Product') || b.type?.includes('臾쇳뭹')) document.getElementById('a-type').value = '臾쇳뭹 (蹂댁삩??룸떒?댁옱)';
+  else if (b.type?.includes('Service') || b.type?.includes('?⑹뿭')) document.getElementById('a-type').value = '?⑹뿭 (?좎?蹂댁닔)';
+  switchTab('analyze');
+}
+
+// ?? AI ANALYSIS ??
+const STEPS = ['怨듦퀬 ?좏삎 遺꾨쪟 以?..','蹂댁삩 ?숈같 ?듦퀎 ?議?以?..','?덉긽 ?숈같媛 怨꾩궛 以?..','?숈같 媛?μ꽦 ?곗텧 以?..','?꾨왂 ?섎┰ 以?..'];
+
+async function runAnalysis() {
+  const title    = document.getElementById('a-title').value.trim();
+  const budget   = parseInt(document.getElementById('a-budget').value.replace(/,/g,'')) || 0;
+  const org      = document.getElementById('a-org').value.trim();
+  const method   = document.getElementById('a-method').value;
+  const type     = document.getElementById('a-type').value;
+  const strength = document.getElementById('a-strength').value;
+
+  if (!title || !budget) { alert('怨듦퀬紐낃낵 ?덉젙媛寃⑹쓣 ?낅젰?섏꽭??'); return; }
+
+  document.getElementById('analysis-loading').style.display = 'block';
+  document.getElementById('analysis-result').innerHTML = '';
+
+  let si = 0;
+  const iv = setInterval(() => {
+    if (si < STEPS.length) document.getElementById('a-load-msg').textContent = STEPS[si++];
+  }, 700);
+
+  const prompt = `?뱀떊? ?쒓뎅 諛쒖쟾怨듦린??蹂댁삩 遺꾩빞 ?낆같 ?꾨Ц 遺꾩꽍媛?낅땲??
+?꾨옒 怨듦퀬瑜?遺꾩꽍?섏뿬 JSON留?諛섑솚?섏꽭??(留덊겕?ㅼ슫 ?놁씠).
+
+怨듦퀬紐? ${title}
+?덉젙媛寃? ${budget.toLocaleString()}??諛쒖＜湲곌?: ${org}
+?숈같諛⑸쾿: ${method}
+怨듦퀬醫낅쪟: ${type}
+?곕━?뚯궗寃쎌웳?? ${strength}
+
+蹂댁삩 遺꾩빞 ?쒖쟾怨꾩뿴 ?ㅼ젣 ?숈같 ?듦퀎:
+- 蹂댁삩怨듭궗 理쒖?媛: ?됯퇏 ?숈같瑜?87~92%, 寃쎌웳 5~15媛쒖궗
+- 蹂댁삩?먯옱 臾쇳뭹援щℓ: ?됯퇏 ?숈같瑜?82~91%, 寃쎌웳 3~8媛쒖궗
+- ?곴꺽?ъ궗: ?됯퇏 ?숈같瑜?88~95%, 寃쎌웳 2~6媛쒖궗
+
+JSON:
+{
+  "expectedRate": ?レ옄,
+  "expectedPrice": ?レ옄,
+  "recommendedRate": ?レ옄,
+  "recommendedPrice": ?レ옄,
+  "probability": ?レ옄,
+  "probabilityLabel": "臾몄옄??,
+  "competitorCount": ?レ옄,
+  "competitionLevel": "移섏뿴/蹂댄넻/?쒖궛",
+  "keyRisk": "臾몄옄??,
+  "keyStrength": "臾몄옄??,
+  "priceRanges": [
+    {"label":"???理쒖??숈같","rate":?レ옄,"color":"#e74c3c"},
+    {"label":"AI?덉긽?숈같媛","rate":?レ옄,"color":"#1a5a8a"},
+    {"label":"沅뚯옣?ъ같媛","rate":?レ옄,"color":"#1a7a3a"},
+    {"label":"?곸젙?곹븳??,"rate":?レ옄,"color":"#aaaaaa"}
+  ],
+  "strategies": [
+    {"icon":"?뮕","head":"?쒕ぉ","desc":"?ㅻ챸","tag":"?듭떖","tagType":"r"},
+    {"icon":"?뱤","head":"?쒕ぉ","desc":"?ㅻ챸","tag":"以묒슂","tagType":"b"},
+    {"icon":"?좑툘","head":"?쒕ぉ","desc":"?ㅻ챸","tag":"二쇱쓽","tagType":"r"},
+    {"icon":"?뱞","head":"?쒕ぉ","desc":"?ㅻ챸","tag":"李멸퀬","tagType":"g"}
+  ]
+}`;
+
+  try {
+    const res  = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, budget, org, method, type, strength }),
+    });
+    const r = await res.json();
+    if (!res.ok) throw new Error(r.error || 'AI 遺꾩꽍 ?ㅻ쪟');
+    clearInterval(iv);
+    document.getElementById('analysis-loading').style.display = 'none';
+    renderAnalysis(r, budget, title, org, method, type);
+  } catch (err) {
+    clearInterval(iv);
+    document.getElementById('analysis-loading').style.display = 'none';
+    alert('遺꾩꽍 ?ㅻ쪟: ' + err.message);
+  }
+}
+
+function renderAnalysis(r, budget, title, org, method, type) {
+  const gaugeOffset = 226 - (r.probability/100)*226;
+  const gaugeColor  = r.probability>=65?'#1a7a3a':r.probability>=40?'#b5700a':'#c0392b';
+  const pr=r.priceRanges, minR=Math.min(...pr.map(p=>p.rate)), maxR=Math.max(...pr.map(p=>p.rate)), span=maxR-minR||1;
+
+  const prHtml = pr.map(pp => {
+    const pct = ((pp.rate-minR)/span*75+10).toFixed(1);
+    return `<div class="prange">
+      <div class="prange-header"><span class="prange-lbl">${pp.label}</span><span class="prange-v" style="color:${pp.color}">${pp.rate}%</span></div>
+      <div class="prange-bar">
+        <div class="prange-fill" style="left:0;width:${pct}%;background:${pp.color}30;"></div>
+        <div class="prange-dot" style="left:${pct}%;background:${pp.color};"></div>
+      </div>
+      <div class="prange-price">${budget?fmtWon(Math.round(budget*pp.rate/100)):'-'}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('analysis-result').innerHTML = `
+    <div class="verdict-bar">
+      <div class="vd-item">
+        <div class="vd-label">AI ?덉긽 ?숈같媛</div>
+        <div class="vd-val">${fmtWon(r.expectedPrice)}</div>
+        <div class="vd-sub">?덉젙媛 ?鍮?${r.expectedRate}%</div>
+      </div>
+      <div class="vd-divider"></div>
+      <div class="vd-item vd-prob">
+        <div class="gauge-wrap">
+          <svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
+            <circle cx="45" cy="45" r="36" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="7"/>
+            <circle cx="45" cy="45" r="36" fill="none" stroke="${gaugeColor}" stroke-width="7" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="${gaugeOffset}"/>
+          </svg>
+          <div class="gauge-text-over">
+            <div class="gauge-pct" style="color:${gaugeColor}">${r.probability}%</div>
+            <div class="gauge-unit">?숈같瑜?/div>
+          </div>
+        </div>
+        <div style="font-size:10px;opacity:.6;margin-top:4px;">${r.probabilityLabel}</div>
+      </div>
+      <div class="vd-divider"></div>
+      <div class="vd-item" style="text-align:right;">
+        <div class="vd-label">沅뚯옣 ?ъ같媛</div>
+        <div class="vd-val">${fmtWon(r.recommendedPrice)}</div>
+        <div class="vd-sub">?ъ같瑜?${r.recommendedRate}%</div>
+      </div>
+    </div>
+    <div class="res-grid">
+      <div class="res-box">
+        <div class="res-box-head">怨듦퀬 ?뺣낫</div>
+        <div class="res-box-body">
+          <table class="info-tbl">
+            <tr><td class="k">怨듦퀬紐?/td><td class="v" style="font-size:11px;">${title}</td></tr>
+            <tr><td class="k">諛쒖＜湲곌?</td><td class="v">${org}</td></tr>
+            <tr><td class="k">?덉젙媛寃?/td><td class="v">${fmtWon(budget)}</td></tr>
+            <tr><td class="k">?숈같諛⑸쾿</td><td class="v">${method}</td></tr>
+            <tr><td class="k">怨듦퀬醫낅쪟</td><td class="v">${type}</td></tr>
+            <tr><td class="k">?덉긽寃쎌웳??/td><td class="v">${r.competitorCount}媛쒖궗 (${r.competitionLevel})</td></tr>
+            <tr><td class="k">二쇱슂湲고쉶</td><td class="v" style="color:var(--green);font-size:11px;">${r.keyStrength}</td></tr>
+            <tr><td class="k">二쇱슂由ъ뒪??/td><td class="v" style="color:var(--red);font-size:11px;">${r.keyRisk}</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="res-box">
+        <div class="res-box-head">?숈같媛 遺꾪룷 (?덉젙媛 ?鍮?%)</div>
+        <div class="res-box-body">${prHtml}</div>
+      </div>
+    </div>
+    <div class="res-box" style="margin-bottom:12px;">
+      <div class="res-box-head">?낆같 ?꾨왂 異붿쿇</div>
+      <div class="res-box-body">
+        ${r.strategies.map(s=>`
+          <div class="strat-item">
+            <div class="strat-icon">${s.icon}</div>
+            <div><div class="strat-head">${s.head}<span class="tag tag-${s.tagType}">${s.tag}</span></div>
+            <div class="strat-desc">${s.desc}</div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="disc">??AI 異붿젙 李멸퀬?⑹엯?덈떎. ?ㅼ젣 ?ъ같 ??bigdata.kepco.co.kr 怨듦퀬 ?먮Ц??諛섎뱶???뺤씤?섏꽭??</div>`;
+
+  document.getElementById('analysis-result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ?? UTILS ??
+function fmtWon(n) {
+  if (!n) return '-';
+  if (n>=100000000) return (n/100000000).toFixed(2)+'?듭썝';
+  if (n>=10000) return Math.round(n/10000).toLocaleString()+'留뚯썝';
+  return n.toLocaleString()+'??;
+}
+function fmtNum(el) {
+  const v = el.value.replace(/[^0-9]/g,'');
+  el.value = v ? parseInt(v).toLocaleString() : '';
+}
+
+
+=== C:\Users\Administrator\Documents\vs code\kepco-bid-app\public\index.html ===
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蹂댁삩 ?낆같 ?듯빀 遺꾩꽍湲?/title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="hd-sub">?쒖쟾 鍮낅뜲?댄꽣 API ?곕룞 쨌 ?ㅼ떆媛?/div>
+    <div class="hd-title"><em>蹂댁삩</em> ?낆같 ?듯빀 議고쉶쨌遺꾩꽍</div>
+    <div class="hd-line">?쒓뎅?꾨젰 쨌 ?⑤?諛쒖쟾 쨌 ?쒕?諛쒖쟾 쨌 以묐?諛쒖쟾 ??/div>
+    <div class="server-badge" id="serverBadge">???곌껐 ?뺤씤 以?..</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('search')">?뵇 怨듦퀬 議고쉶</button>
+    <button class="tab-btn" onclick="switchTab('analyze')">?뱤 ?숈같 遺꾩꽍</button>
+  </div>
+
+  <!-- ?먥븧??怨듦퀬 議고쉶 ???먥븧??-->
+  <div class="tab-content active" id="tab-search">
+    <div class="panel">
+      <div class="panel-head"><span class="badge">1</span> 寃??議곌굔</div>
+      <div class="panel-body">
+        <div class="row3">
+          <div class="field">
+            <label>寃?됱뼱</label>
+            <input type="text" id="q-keyword" value="蹂댁삩" placeholder="蹂댁삩, ?⑥뿴, 蹂댁삩??..">
+          </div>
+          <div class="field">
+            <label>諛쒖＜ 湲곌?</label>
+            <select id="q-company">
+              <option value="">?꾩껜 怨꾩뿴??/option>
+            </select>
+          </div>
+          <div class="field">
+            <label>議고쉶 湲곌컙</label>
+            <select id="q-days">
+              <option value="10">理쒓렐 10??/option>
+              <option value="25" selected>理쒓렐 25??/option>
+              <option value="29">理쒓렐 29??(理쒕?)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="searchBids()">?뵇 蹂댁삩 ?낆같怨듦퀬 議고쉶</button>
+      </div>
+    </div>
+
+    <div id="search-status"></div>
+    <div id="search-results"></div>
+    <div id="search-pager"></div>
+    <div id="analyze-trigger" style="display:none;margin-top:12px;"></div>
+  </div>
+
+  <!-- ?먥븧???숈같 遺꾩꽍 ???먥븧??-->
+  <div class="tab-content" id="tab-analyze">
+    <div class="panel">
+      <div class="panel-head"><span class="badge">2</span> 遺꾩꽍 ???怨듦퀬</div>
+      <div class="panel-body">
+        <div class="row2">
+          <div class="field">
+            <label>怨듦퀬紐?/label>
+            <input type="text" id="a-title" placeholder="怨듦퀬 議고쉶?먯꽌 ?좏깮?섍굅??吏곸젒 ?낅젰">
+          </div>
+          <div class="field">
+            <label>?덉젙 媛寃?(??</label>
+            <input type="text" id="a-budget" placeholder="?? 120,000,000" oninput="fmtNum(this)">
+          </div>
+          <div class="field">
+            <label>諛쒖＜ 湲곌?</label>
+            <input type="text" id="a-org" placeholder="?쒓뎅?⑤?諛쒖쟾, ?쒓뎅?꾨젰...">
+          </div>
+          <div class="field">
+            <label>?숈같 諛⑸쾿</label>
+            <select id="a-method">
+              <option>理쒖?媛?숈같??/option>
+              <option>?곴꺽?ъ궗?숈같??/option>
+              <option>?묒긽???섑븳 怨꾩빟</option>
+              <option>?쒗븳寃쎌웳?낆같</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>怨듦퀬 醫낅쪟</label>
+            <select id="a-type">
+              <option>怨듭궗 (蹂댁삩怨듭궗)</option>
+              <option>臾쇳뭹 (蹂댁삩??룸떒?댁옱)</option>
+              <option>?⑹뿭 (?좎?蹂댁닔)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>?곕━ ?뚯궗 寃쎌웳??/label>
+            <select id="a-strength">
+              <option value="蹂댄넻">蹂댄넻 (?쇰컲??寃쎌웳??</option>
+              <option value="媛뺥븿">媛뺥븿 (?쒖쟾 ?ㅼ쟻 ?ㅼ닔)</option>
+              <option value="?쏀븿">?쏀븿 (泥??꾩쟾쨌?ㅼ쟻 遺議?</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="runAnalysis()">?쨼 AI ?숈같 ?덉륫 遺꾩꽍</button>
+      </div>
+    </div>
+
+    <div id="analysis-loading" style="display:none;" class="panel">
+      <div class="panel-body">
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+          <div style="margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--ink3);" id="a-load-msg">遺꾩꽍 以?..</div>
+        </div>
+      </div>
+    </div>
+    <div id="analysis-result"></div>
+  </div>
+
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
+
+
+=== C:\Users\Administrator\Documents\vs code\kepco-bid-app\server\index.js ===
+// server/index.js
+require('dotenv').config();
+const express = require('express');
+const axios   = require('axios');
+const path    = require('path');
+
+const app  = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
+
+// ?? ?좎쭨 ?좏떥 (YYYYMMDD) ??
+function dateStr(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toISOString().slice(0, 10).replace(/-/g, '');
+}
+
+// ?? ?묐떟 ?뺢퇋??(?ㅼ젣 ?꾨뱶紐?湲곕컲) ??
+function normalize(item) {
+  const COMPANY = {
+    COM01: '?쒓뎅?꾨젰怨듭궗', COM02: '?쒓뎅?쒕?諛쒖쟾', COM03: '?쒖쟾援?젣?먯옄?λ??숈썝',
+    COM04: '?쒓뎅?⑤?諛쒖쟾', COM05: '?쒓뎅以묐?諛쒖쟾', COM06: '?쒓뎅?⑤룞諛쒖쟾',
+    COM08: '?쒓뎅?숈꽌諛쒖쟾', COM09: '?쒓뎅?꾨젰湲곗닠', COM10: '?쒖쟾KPS',
+    COM11: '?쒓뎅?꾨젰嫄곕옒??, COM12: '?쒓뎅?먯옄?μ뿰猷?, COM14: '?쒓뎅諛쒖쟾援먯쑁??,
+    COM16: '?쒓뎅?댁긽?띾젰', COM19: 'KAPES',
+  };
+  // 泥⑤??뚯씪 紐⑸줉 (理쒕? 5媛?
+  const files = [];
+  for (let i = 1; i <= 5; i++) {
+    if (item[`filename${i}`] && item[`filename${i}`] !== '-') {
+      files.push({ name: item[`filename${i}`], url: item[`filenlink${i}`] ?? null });
+    }
+  }
+
+  return {
+    // ?? 湲곕낯 ?뺣낫 ??
+    no        : item.no        ?? '-',
+    title     : item.name      ?? '-',
+    org       : COMPANY[item.companyId] ?? item.companyId ?? '-',
+    companyId : item.companyId ?? '',
+    status    : item.progressState ?? '-',
+    source    : COMPANY[item.companyId] ?? item.companyId ?? '?쒖쟾怨꾩뿴',
+
+    // ?? 湲덉븸 ?뺣낫 ??
+    budget          : parseFloat(item.presumedPrice    ?? item.estimatedPrice ?? 0),  // ?꾧툒(?ъ젙)湲덉븸
+    estimatedPrice  : parseFloat(item.estimatedPrice   ?? 0),   // 異붿젙湲덉븸
+    preBidPrice     : parseFloat(item.preBidPrice      ?? 0),   // ?덈퉬媛寃⑹큹湲곌툑??    assessmentAmount: parseFloat(item.assessmentAmount ?? 0),   // ?ъ젙湲덉븸
+
+    // ?? 諛⑸쾿 ?뺣낫 ??
+    contractType  : item.contractType   ?? '-',   // ?꾧툒援щ텇
+    purchaseType  : item.purchaseType   ?? '-',   // 怨꾩빟諛⑸쾿
+    openMethod    : item.openMethod     ?? '-',   // ?낆같諛⑸쾿
+    competitionType: item.competitionType ?? '-', // ?숈같諛⑸쾿
+
+    // ?? ?쇱젙 ?뺣낫 ??
+    bidBegin  : item.bidAttendReqBeginDatetime
+                  ? item.bidAttendReqBeginDatetime.slice(0, 16).replace('T',' ')
+                  : '-',
+    deadline  : item.bidAttendReqCloseDatetime
+                  ? item.bidAttendReqCloseDatetime.slice(0, 16).replace('T',' ')
+                  : (item.endDatetime?.slice(0, 10) ?? '-'),
+    deliveryDueDate: item.deliveryDueDate ?? '-',  // ?⑷린??
+    // ?? 李멸? ?먭꺽 ??
+    bidAttendRestrict: item.bidAttendRestrict ?? '-',
+
+    // ?? 泥⑤??뚯씪 ??
+    files,
+  };
+}
+
+// ?? ?뚯궗 紐⑸줉 ??
+const COMPANIES = {
+  '': '?꾩껜',
+  COM01: '?쒓뎅?꾨젰怨듭궗', COM02: '?쒓뎅?쒕?諛쒖쟾',
+  COM04: '?쒓뎅?⑤?諛쒖쟾', COM05: '?쒓뎅以묐?諛쒖쟾',
+  COM06: '?쒓뎅?⑤룞諛쒖쟾', COM08: '?쒓뎅?숈꽌諛쒖쟾',
+  COM09: '?쒓뎅?꾨젰湲곗닠',  COM10: '?쒖쟾KPS',
+};
+
+app.get('/api/companies', (req, res) => res.json(COMPANIES));
+
+// ?? ?붾쾭洹???
+app.get('/api/debug', async (req, res) => {
+  const apiKey = process.env.KEPCO_API_KEY;
+  try {
+    const r = await axios.get('https://bigdata.kepco.co.kr/openapi/v1/electContract.do', {
+      params: {
+        apiKey,
+        companyId      : 'COM04',
+        noticeBeginDate: dateStr(-30),
+        noticeEndDate  : dateStr(30),
+        returnType     : 'json',
+      },
+      timeout: 10000,
+    });
+    res.json({ count: r.data?.data?.length ?? 0, sample: r.data?.data?.slice(0, 2) });
+  } catch (err) {
+    res.json({ error: err.message, status: err.response?.status });
+  }
+});
+
+// ?? 硫붿씤 ?낆같 議고쉶 API ??
+app.get('/api/bids', async (req, res) => {
+  const {
+    keyword    = '蹂댁삩',
+    companyId  = '',      // 鍮?臾몄옄??= ?꾩껜
+    days       = 25,
+    futureDays = 4,
+  } = req.query;
+
+  const apiKey = process.env.KEPCO_API_KEY;
+  if (!apiKey || apiKey.startsWith('?ш린??)) {
+    return res.status(500).json({ error: 'KEPCO_API_KEY 誘몄꽕??(.env ?뚯씪 ?뺤씤)', items: [] });
+  }
+
+  try {
+    // ?쒖쟾 bigdata API: apiKey??荑쇰━?ㅽ듃留곸쑝濡? name? ?대씪?댁뼵???꾪꽣濡?泥섎━
+    const params = {
+      apiKey,
+      noticeBeginDate: dateStr(-parseInt(days)),
+      noticeEndDate  : dateStr(parseInt(futureDays)),
+      returnType     : 'json',
+    };
+    if (companyId) params.companyId = companyId;
+    // name ?뚮씪誘명꽣??401 ?좊컻 媛?????꾩껜 議고쉶 ???대씪?댁뼵???꾪꽣留곸쑝濡??泥?
+    const r = await axios.get('https://bigdata.kepco.co.kr/openapi/v1/electContract.do', {
+      params,
+      timeout: 12000,
+    });
+
+    const raw = Array.isArray(r.data?.data) ? r.data.data : [];
+
+    // ?대씪?댁뼵???ъ씠???ㅼ썙???꾪꽣
+    const filtered = keyword
+      ? raw.filter(i => (i.name ?? '').includes(keyword))
+      : raw;
+
+    return res.json({
+      total: filtered.length,
+      items: filtered.map(normalize),
+    });
+
+  } catch (err) {
+    console.error('[KEPCO]', err.response?.status, err.message);
+    return res.status(502).json({
+      error: `API ?ㅻ쪟(${err.response?.status ?? err.code}): ${err.message}`,
+      items: [],
+    });
+  }
+});
+
+
+// ?? AI ?숈같 遺꾩꽍 (Gemini) ??
+app.post('/api/analyze', async (req, res) => {
+  const { title, budget, org, method, type, strength } = req.body;
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY 誘몄꽕?? });
+
+  const prompt = `?뱀떊? ?쒓뎅 諛쒖쟾怨듦린??蹂댁삩 遺꾩빞 ?낆같 ?꾨Ц 遺꾩꽍媛?낅땲??
+?꾨옒 怨듦퀬瑜?遺꾩꽍?섏뿬 JSON留?諛섑솚?섏꽭??(留덊겕?ㅼ슫 ?놁씠, ?쒖닔 JSON).
+
+怨듦퀬紐? ${title}
+?덉젙媛寃? ${Number(budget).toLocaleString()}??諛쒖＜湲곌?: ${org}
+?숈같諛⑸쾿: ${method}
+怨듦퀬醫낅쪟: ${type}
+?곕━?뚯궗寃쎌웳?? ${strength}
+
+蹂댁삩 遺꾩빞 ?쒖쟾怨꾩뿴 ?ㅼ젣 ?숈같 ?듦퀎:
+- 蹂댁삩怨듭궗 理쒖?媛: ?됯퇏 ?숈같瑜?87~92%, 寃쎌웳 5~15媛쒖궗
+- 蹂댁삩?먯옱 臾쇳뭹援щℓ: ?됯퇏 ?숈같瑜?82~91%, 寃쎌웳 3~8媛쒖궗
+- ?곴꺽?ъ궗: ?됯퇏 ?숈같瑜?88~95%, 寃쎌웳 2~6媛쒖궗
+
+JSON留?諛섑솚:
+{
+  "expectedRate": ?덉긽?숈같瑜좎닽??
+  "expectedPrice": ?덉긽?숈같媛?レ옄,
+  "recommendedRate": 沅뚯옣?ъ같瑜좎닽??
+  "recommendedPrice": 沅뚯옣?ъ같媛?レ옄,
+  "probability": ?숈같媛?μ꽦?レ옄,
+  "probabilityLabel": "?쒕쭏?뷀룊媛",
+  "competitorCount": 寃쎌웳?낆껜?섏닽??
+  "competitionLevel": "移섏뿴?먮뒗蹂댄넻?먮뒗?쒖궛",
+  "keyRisk": "由ъ뒪?ы븳臾몄옣",
+  "keyStrength": "湲고쉶?쒕Ц??,
+  "priceRanges": [
+    {"label":"???理쒖??숈같","rate":?レ옄,"color":"#e74c3c"},
+    {"label":"AI?덉긽?숈같媛","rate":?レ옄,"color":"#1a5a8a"},
+    {"label":"沅뚯옣?ъ같媛","rate":?レ옄,"color":"#1a7a3a"},
+    {"label":"?곸젙?곹븳??,"rate":?レ옄,"color":"#aaaaaa"}
+  ],
+  "strategies": [
+    {"icon":"?뮕","head":"?쒕ぉ","desc":"?ㅻ챸","tag":"?듭떖","tagType":"r"},
+    {"icon":"?뱤","head":"?쒕ぉ","desc":"?ㅻ챸","tag":"以묒슂","tagType":"b"},
+    {"icon":"?좑툘","head":"?쒕ぉ","desc":"?ㅻ챸","tag":"二쇱쓽","tagType":"r"},
+    {"icon":"?뱞","head":"?쒕ぉ","desc":"?ㅻ챸","tag":"李멸퀬","tagType":"g"}
+  ]
+}`;
+
+  try {
+    const r = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key=${apiKey}`,
+      { contents: [{ parts: [{ text: prompt }] }] },
+      { timeout: 20000 }
+    );
+    const raw  = r.data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    const json = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    return res.json(json);
+  } catch (err) {
+    console.error('[GEMINI]', err.response?.status, err.message);
+    return res.status(502).json({ error: `Gemini ?ㅻ쪟: ${err.message}` });
+  }
+});
+
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
+
+app.listen(PORT, () => {
+  console.log(`\n?뵆 ?쒕쾭 ?ㅽ뻾 以? http://localhost:${PORT}`);
+  console.log(`???쒖쟾 bigdata API: ${process.env.KEPCO_API_KEY ? '?????덉쓬' : '?????놁쓬'}`);
+  console.log(`?쨼 Gemini API    : ${process.env.GEMINI_API_KEY ? '?????덉쓬' : '?????놁쓬'}`);
+  console.log(`?뵇 ?붾쾭洹? http://localhost:${PORT}/api/debug\n`);
+});
+
+// ?? AI ?숈같 遺꾩꽍 (Gemini) ??
+// ?꾩튂: SPA fallback ?욎뿉 異붽?
+
+
+=== C:\Users\Administrator\Documents\vs code\kepco-bid-app\.env ===
+# ?????????????????????????????????????????????
+# ?쒖쟾쨌諛쒖쟾怨듦린???낆같 API ???ㅼ젙
+# ?????????????????????????????????????????????
+
+# ?⑤?諛쒖쟾 / ?쒕?諛쒖쟾 怨듦났 API ??(怨듯넻)
+KOSPO_API_KEY=1b37dc2821b3817aaa75c087bc68c4f7b0438f7a62b3c1e5a04a95a1ad58b31c
+
+# ?쒓뎅?꾨젰 ?꾩옄?낆같 API ??(?꾨젰?곗씠?곌컻諛⑺룷??
+KEPCO_API_KEY=m8wZ622lQLFrta9unRx1i2h465yJsX0Wp9fg7N4Y
+
+# ?쒕??섏씠 api ??(諛쒓툒諛쏆? ?ㅻ줈 援먯껜)
+GEMINI_API_KEY=AIzaSyBTTs0aKQCpE-j7WkfSlF4bgo_zgAoZ6-w
+
+# ?쒕쾭 ?ы듃 (湲곕낯 3000)
+PORT=3000
+
+
+=== C:\Users\Administrator\Documents\vs code\kepco-bid-app\package-lock.json ===
+{
+  "name": "kepco-bid-analyzer",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "kepco-bid-analyzer",
+      "version": "1.0.0",
+      "dependencies": {
+        "axios": "^1.6.0",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "xml2js": "^0.6.2"
+      },
+      "devDependencies": {
+        "nodemon": "^3.0.2"
+      }
+    },
+    "node_modules/accepts": {
+      "version": "1.3.8",
+      "resolved": "https://registry.npmjs.org/accepts/-/accepts-1.3.8.tgz",
+      "integrity": "sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==",
+      "license": "MIT",
+      "dependencies": {
+        "mime-types": "~2.1.34",
+        "negotiator": "0.6.3"
+      },
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/anymatch": {
+      "version": "3.1.3",
+      "resolved": "https://registry.npmjs.org/anymatch/-/anymatch-3.1.3.tgz",
+      "integrity": "sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "normalize-path": "^3.0.0",
+        "picomatch": "^2.0.4"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/array-flatten": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/array-flatten/-/array-flatten-1.1.1.tgz",
+      "integrity": "sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==",
+      "license": "MIT"
+    },
+    "node_modules/asynckit": {
+      "version": "0.4.0",
+      "resolved": "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz",
+      "integrity": "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==",
+      "license": "MIT"
+    },
+    "node_modules/axios": {
+      "version": "1.13.6",
+      "resolved": "https://registry.npmjs.org/axios/-/axios-1.13.6.tgz",
+      "integrity": "sha512-ChTCHMouEe2kn713WHbQGcuYrr6fXTBiu460OTwWrWob16g1bXn4vtz07Ope7ewMozJAnEquLk5lWQWtBig9DQ==",
+      "license": "MIT",
+      "dependencies": {
+        "follow-redirects": "^1.15.11",
+        "form-data": "^4.0.5",
+        "proxy-from-env": "^1.1.0"
+      }
+    },
+    "node_modules/balanced-match": {
+      "version": "4.0.4",
+      "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-4.0.4.tgz",
+      "integrity": "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": "18 || 20 || >=22"
+      }
+    },
+    "node_modules/binary-extensions": {
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz",
+      "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/body-parser": {
+      "version": "1.20.4",
+      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.4.tgz",
+      "integrity": "sha512-ZTgYYLMOXY9qKU/57FAo8F+HA2dGX7bqGc71txDRC1rS4frdFI5R7NhluHxH6M0YItAP0sHB4uqAOcYKxO6uGA==",
+      "license": "MIT",
+      "dependencies": {
+        "bytes": "~3.1.2",
+        "content-type": "~1.0.5",
+        "debug": "2.6.9",
+        "depd": "2.0.0",
+        "destroy": "~1.2.0",
+        "http-errors": "~2.0.1",
+        "iconv-lite": "~0.4.24",
+        "on-finished": "~2.4.1",
+        "qs": "~6.14.0",
+        "raw-body": "~2.5.3",
+        "type-is": "~1.6.18",
+        "unpipe": "~1.0.0"
+      },
+      "engines": {
+        "node": ">= 0.8",
+        "npm": "1.2.8000 || >= 1.4.16"
+      }
+    },
+    "node_modules/brace-expansion": {
+      "version": "5.0.4",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.4.tgz",
+      "integrity": "sha512-h+DEnpVvxmfVefa4jFbCf5HdH5YMDXRsmKflpf1pILZWRFlTbJpxeU55nJl4Smt5HQaGzg1o6RHFPJaOqnmBDg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "balanced-match": "^4.0.2"
+      },
+      "engines": {
+        "node": "18 || 20 || >=22"
+      }
+    },
+    "node_modules/braces": {
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
+      "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "fill-range": "^7.1.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/bytes": {
+      "version": "3.1.2",
+      "resolved": "https://registry.npmjs.org/bytes/-/bytes-3.1.2.tgz",
+      "integrity": "sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/call-bind-apply-helpers": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/call-bind-apply-helpers/-/call-bind-apply-helpers-1.0.2.tgz",
+      "integrity": "sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==",
+      "license": "MIT",
+      "dependencies": {
+        "es-errors": "^1.3.0",
+        "function-bind": "^1.1.2"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/call-bound": {
+      "version": "1.0.4",
+      "resolved": "https://registry.npmjs.org/call-bound/-/call-bound-1.0.4.tgz",
+      "integrity": "sha512-+ys997U96po4Kx/ABpBCqhA9EuxJaQWDQg7295H4hBphv3IZg0boBKuwYpt4YXp6MZ5AmZQnU/tyMTlRpaSejg==",
+      "license": "MIT",
+      "dependencies": {
+        "call-bind-apply-helpers": "^1.0.2",
+        "get-intrinsic": "^1.3.0"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/chokidar": {
+      "version": "3.6.0",
+      "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-3.6.0.tgz",
+      "integrity": "sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "anymatch": "~3.1.2",
+        "braces": "~3.0.2",
+        "glob-parent": "~5.1.2",
+        "is-binary-path": "~2.1.0",
+        "is-glob": "~4.0.1",
+        "normalize-path": "~3.0.0",
+        "readdirp": "~3.6.0"
+      },
+      "engines": {
+        "node": ">= 8.10.0"
+      },
+      "funding": {
+        "url": "https://paulmillr.com/funding/"
+      },
+      "optionalDependencies": {
+        "fsevents": "~2.3.2"
+      }
+    },
+    "node_modules/combined-stream": {
+      "version": "1.0.8",
+      "resolved": "https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.8.tgz",
+      "integrity": "sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==",
+      "license": "MIT",
+      "dependencies": {
+        "delayed-stream": "~1.0.0"
+      },
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/content-disposition": {
+      "version": "0.5.4",
+      "resolved": "https://registry.npmjs.org/content-disposition/-/content-disposition-0.5.4.tgz",
+      "integrity": "sha512-FveZTNuGw04cxlAiWbzi6zTAL/lhehaWbTtgluJh4/E95DqMwTmha3KZN1aAWA8cFIhHzMZUvLevkw5Rqk+tSQ==",
+      "license": "MIT",
+      "dependencies": {
+        "safe-buffer": "5.2.1"
+      },
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/content-type": {
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/content-type/-/content-type-1.0.5.tgz",
+      "integrity": "sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/cookie": {
+      "version": "0.7.2",
+      "resolved": "https://registry.npmjs.org/cookie/-/cookie-0.7.2.tgz",
+      "integrity": "sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/cookie-signature": {
+      "version": "1.0.7",
+      "resolved": "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.0.7.tgz",
+      "integrity": "sha512-NXdYc3dLr47pBkpUCHtKSwIOQXLVn8dZEuywboCOJY/osA0wFSLlSawr3KN8qXJEyX66FcONTH8EIlVuK0yyFA==",
+      "license": "MIT"
+    },
+    "node_modules/debug": {
+      "version": "2.6.9",
+      "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
+      "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+      "license": "MIT",
+      "dependencies": {
+        "ms": "2.0.0"
+      }
+    },
+    "node_modules/delayed-stream": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz",
+      "integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.4.0"
+      }
+    },
+    "node_modules/depd": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/depd/-/depd-2.0.0.tgz",
+      "integrity": "sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/destroy": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
+      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8",
+        "npm": "1.2.8000 || >= 1.4.16"
+      }
+    },
+    "node_modules/dotenv": {
+      "version": "16.6.1",
+      "resolved": "https://registry.npmjs.org/dotenv/-/dotenv-16.6.1.tgz",
+      "integrity": "sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==",
+      "license": "BSD-2-Clause",
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "url": "https://dotenvx.com"
+      }
+    },
+    "node_modules/dunder-proto": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/dunder-proto/-/dunder-proto-1.0.1.tgz",
+      "integrity": "sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==",
+      "license": "MIT",
+      "dependencies": {
+        "call-bind-apply-helpers": "^1.0.1",
+        "es-errors": "^1.3.0",
+        "gopd": "^1.2.0"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/ee-first": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz",
+      "integrity": "sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==",
+      "license": "MIT"
+    },
+    "node_modules/encodeurl": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/encodeurl/-/encodeurl-2.0.0.tgz",
+      "integrity": "sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/es-define-property": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/es-define-property/-/es-define-property-1.0.1.tgz",
+      "integrity": "sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/es-errors": {
+      "version": "1.3.0",
+      "resolved": "https://registry.npmjs.org/es-errors/-/es-errors-1.3.0.tgz",
+      "integrity": "sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/es-object-atoms": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/es-object-atoms/-/es-object-atoms-1.1.1.tgz",
+      "integrity": "sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==",
+      "license": "MIT",
+      "dependencies": {
+        "es-errors": "^1.3.0"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/es-set-tostringtag": {
+      "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/es-set-tostringtag/-/es-set-tostringtag-2.1.0.tgz",
+      "integrity": "sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==",
+      "license": "MIT",
+      "dependencies": {
+        "es-errors": "^1.3.0",
+        "get-intrinsic": "^1.2.6",
+        "has-tostringtag": "^1.0.2",
+        "hasown": "^2.0.2"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/escape-html": {
+      "version": "1.0.3",
+      "resolved": "https://registry.npmjs.org/escape-html/-/escape-html-1.0.3.tgz",
+      "integrity": "sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow==",
+      "license": "MIT"
+    },
+    "node_modules/etag": {
+      "version": "1.8.1",
+      "resolved": "https://registry.npmjs.org/etag/-/etag-1.8.1.tgz",
+      "integrity": "sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/express": {
+      "version": "4.22.1",
+      "resolved": "https://registry.npmjs.org/express/-/express-4.22.1.tgz",
+      "integrity": "sha512-F2X8g9P1X7uCPZMA3MVf9wcTqlyNp7IhH5qPCI0izhaOIYXaW9L535tGA3qmjRzpH+bZczqq7hVKxTR4NWnu+g==",
+      "license": "MIT",
+      "dependencies": {
+        "accepts": "~1.3.8",
+        "array-flatten": "1.1.1",
+        "body-parser": "~1.20.3",
+        "content-disposition": "~0.5.4",
+        "content-type": "~1.0.4",
+        "cookie": "~0.7.1",
+        "cookie-signature": "~1.0.6",
+        "debug": "2.6.9",
+        "depd": "2.0.0",
+        "encodeurl": "~2.0.0",
+        "escape-html": "~1.0.3",
+        "etag": "~1.8.1",
+        "finalhandler": "~1.3.1",
+        "fresh": "~0.5.2",
+        "http-errors": "~2.0.0",
+        "merge-descriptors": "1.0.3",
+        "methods": "~1.1.2",
+        "on-finished": "~2.4.1",
+        "parseurl": "~1.3.3",
+        "path-to-regexp": "~0.1.12",
+        "proxy-addr": "~2.0.7",
+        "qs": "~6.14.0",
+        "range-parser": "~1.2.1",
+        "safe-buffer": "5.2.1",
+        "send": "~0.19.0",
+        "serve-static": "~1.16.2",
+        "setprototypeof": "1.2.0",
+        "statuses": "~2.0.1",
+        "type-is": "~1.6.18",
+        "utils-merge": "1.0.1",
+        "vary": "~1.1.2"
+      },
+      "engines": {
+        "node": ">= 0.10.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/express"
+      }
+    },
+    "node_modules/fill-range": {
+      "version": "7.1.1",
+      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.1.1.tgz",
+      "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "to-regex-range": "^5.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/finalhandler": {
+      "version": "1.3.2",
+      "resolved": "https://registry.npmjs.org/finalhandler/-/finalhandler-1.3.2.tgz",
+      "integrity": "sha512-aA4RyPcd3badbdABGDuTXCMTtOneUCAYH/gxoYRTZlIJdF0YPWuGqiAsIrhNnnqdXGswYk6dGujem4w80UJFhg==",
+      "license": "MIT",
+      "dependencies": {
+        "debug": "2.6.9",
+        "encodeurl": "~2.0.0",
+        "escape-html": "~1.0.3",
+        "on-finished": "~2.4.1",
+        "parseurl": "~1.3.3",
+        "statuses": "~2.0.2",
+        "unpipe": "~1.0.0"
+      },
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/follow-redirects": {
+      "version": "1.15.11",
+      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.11.tgz",
+      "integrity": "sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==",
+      "funding": [
+        {
+          "type": "individual",
+          "url": "https://github.com/sponsors/RubenVerborgh"
+        }
+      ],
+      "license": "MIT",
+      "engines": {
+        "node": ">=4.0"
+      },
+      "peerDependenciesMeta": {
+        "debug": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/form-data": {
+      "version": "4.0.5",
+      "resolved": "https://registry.npmjs.org/form-data/-/form-data-4.0.5.tgz",
+      "integrity": "sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==",
+      "license": "MIT",
+      "dependencies": {
+        "asynckit": "^0.4.0",
+        "combined-stream": "^1.0.8",
+        "es-set-tostringtag": "^2.1.0",
+        "hasown": "^2.0.2",
+        "mime-types": "^2.1.12"
+      },
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/forwarded": {
+      "version": "0.2.0",
+      "resolved": "https://registry.npmjs.org/forwarded/-/forwarded-0.2.0.tgz",
+      "integrity": "sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/fresh": {
+      "version": "0.5.2",
+      "resolved": "https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz",
+      "integrity": "sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/fsevents": {
+      "version": "2.3.3",
+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
+      "dev": true,
+      "hasInstallScript": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
+      }
+    },
+    "node_modules/function-bind": {
+      "version": "1.1.2",
+      "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
+      "integrity": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==",
+      "license": "MIT",
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/get-intrinsic": {
+      "version": "1.3.0",
+      "resolved": "https://registry.npmjs.org/get-intrinsic/-/get-intrinsic-1.3.0.tgz",
+      "integrity": "sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==",
+      "license": "MIT",
+      "dependencies": {
+        "call-bind-apply-helpers": "^1.0.2",
+        "es-define-property": "^1.0.1",
+        "es-errors": "^1.3.0",
+        "es-object-atoms": "^1.1.1",
+        "function-bind": "^1.1.2",
+        "get-proto": "^1.0.1",
+        "gopd": "^1.2.0",
+        "has-symbols": "^1.1.0",
+        "hasown": "^2.0.2",
+        "math-intrinsics": "^1.1.0"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/get-proto": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/get-proto/-/get-proto-1.0.1.tgz",
+      "integrity": "sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==",
+      "license": "MIT",
+      "dependencies": {
+        "dunder-proto": "^1.0.1",
+        "es-object-atoms": "^1.0.0"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/glob-parent": {
+      "version": "5.1.2",
+      "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz",
+      "integrity": "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "is-glob": "^4.0.1"
+      },
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/gopd": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/gopd/-/gopd-1.2.0.tgz",
+      "integrity": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/has-flag": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/has-flag/-/has-flag-3.0.0.tgz",
+      "integrity": "sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=4"
+      }
+    },
+    "node_modules/has-symbols": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/has-symbols/-/has-symbols-1.1.0.tgz",
+      "integrity": "sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/has-tostringtag": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/has-tostringtag/-/has-tostringtag-1.0.2.tgz",
+      "integrity": "sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==",
+      "license": "MIT",
+      "dependencies": {
+        "has-symbols": "^1.0.3"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/hasown": {
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/hasown/-/hasown-2.0.2.tgz",
+      "integrity": "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==",
+      "license": "MIT",
+      "dependencies": {
+        "function-bind": "^1.1.2"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/http-errors": {
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/http-errors/-/http-errors-2.0.1.tgz",
+      "integrity": "sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==",
+      "license": "MIT",
+      "dependencies": {
+        "depd": "~2.0.0",
+        "inherits": "~2.0.4",
+        "setprototypeof": "~1.2.0",
+        "statuses": "~2.0.2",
+        "toidentifier": "~1.0.1"
+      },
+      "engines": {
+        "node": ">= 0.8"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/express"
+      }
+    },
+    "node_modules/iconv-lite": {
+      "version": "0.4.24",
+      "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz",
+      "integrity": "sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==",
+      "license": "MIT",
+      "dependencies": {
+        "safer-buffer": ">= 2.1.2 < 3"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/ignore-by-default": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/ignore-by-default/-/ignore-by-default-1.0.1.tgz",
+      "integrity": "sha512-Ius2VYcGNk7T90CppJqcIkS5ooHUZyIQK+ClZfMfMNFEF9VSE73Fq+906u/CWu92x4gzZMWOwfFYckPObzdEbA==",
+      "dev": true,
+      "license": "ISC"
+    },
+    "node_modules/inherits": {
+      "version": "2.0.4",
+      "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
+      "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==",
+      "license": "ISC"
+    },
+    "node_modules/ipaddr.js": {
+      "version": "1.9.1",
+      "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz",
+      "integrity": "sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.10"
+      }
+    },
+    "node_modules/is-binary-path": {
+      "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
+      "integrity": "sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "binary-extensions": "^2.0.0"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/is-extglob": {
+      "version": "2.1.1",
+      "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
+      "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/is-glob": {
+      "version": "4.0.3",
+      "resolved": "https://registry.npmjs.org/is-glob/-/is-glob-4.0.3.tgz",
+      "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "is-extglob": "^2.1.1"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/is-number": {
+      "version": "7.0.0",
+      "resolved": "https://registry.npmjs.org/is-number/-/is-number-7.0.0.tgz",
+      "integrity": "sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.12.0"
+      }
+    },
+    "node_modules/math-intrinsics": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz",
+      "integrity": "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.4"
+      }
+    },
+    "node_modules/media-typer": {
+      "version": "0.3.0",
+      "resolved": "https://registry.npmjs.org/media-typer/-/media-typer-0.3.0.tgz",
+      "integrity": "sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/merge-descriptors": {
+      "version": "1.0.3",
+      "resolved": "https://registry.npmjs.org/merge-descriptors/-/merge-descriptors-1.0.3.tgz",
+      "integrity": "sha512-gaNvAS7TZ897/rVaZ0nMtAyxNyi/pdbjbAwUpFQpN70GqnVfOiXpeUUMKRBmzXaSQ8DdTX4/0ms62r2K+hE6mQ==",
+      "license": "MIT",
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/methods": {
+      "version": "1.1.2",
+      "resolved": "https://registry.npmjs.org/methods/-/methods-1.1.2.tgz",
+      "integrity": "sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/mime": {
+      "version": "1.6.0",
+      "resolved": "https://registry.npmjs.org/mime/-/mime-1.6.0.tgz",
+      "integrity": "sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==",
+      "license": "MIT",
+      "bin": {
+        "mime": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      }
+    },
+    "node_modules/mime-db": {
+      "version": "1.52.0",
+      "resolved": "https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz",
+      "integrity": "sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/mime-types": {
+      "version": "2.1.35",
+      "resolved": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz",
+      "integrity": "sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==",
+      "license": "MIT",
+      "dependencies": {
+        "mime-db": "1.52.0"
+      },
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/minimatch": {
+      "version": "10.2.4",
+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.4.tgz",
+      "integrity": "sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==",
+      "dev": true,
+      "license": "BlueOak-1.0.0",
+      "dependencies": {
+        "brace-expansion": "^5.0.2"
+      },
+      "engines": {
+        "node": "18 || 20 || >=22"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/isaacs"
+      }
+    },
+    "node_modules/ms": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+      "integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==",
+      "license": "MIT"
+    },
+    "node_modules/negotiator": {
+      "version": "0.6.3",
+      "resolved": "https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz",
+      "integrity": "sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/nodemon": {
+      "version": "3.1.14",
+      "resolved": "https://registry.npmjs.org/nodemon/-/nodemon-3.1.14.tgz",
+      "integrity": "sha512-jakjZi93UtB3jHMWsXL68FXSAosbLfY0In5gtKq3niLSkrWznrVBzXFNOEMJUfc9+Ke7SHWoAZsiMkNP3vq6Jw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "chokidar": "^3.5.2",
+        "debug": "^4",
+        "ignore-by-default": "^1.0.1",
+        "minimatch": "^10.2.1",
+        "pstree.remy": "^1.1.8",
+        "semver": "^7.5.3",
+        "simple-update-notifier": "^2.0.0",
+        "supports-color": "^5.5.0",
+        "touch": "^3.1.0",
+        "undefsafe": "^2.0.5"
+      },
+      "bin": {
+        "nodemon": "bin/nodemon.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/nodemon"
+      }
+    },
+    "node_modules/nodemon/node_modules/debug": {
+      "version": "4.4.3",
+      "resolved": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz",
+      "integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "ms": "^2.1.3"
+      },
+      "engines": {
+        "node": ">=6.0"
+      },
+      "peerDependenciesMeta": {
+        "supports-color": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/nodemon/node_modules/ms": {
+      "version": "2.1.3",
+      "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
+      "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/normalize-path": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/normalize-path/-/normalize-path-3.0.0.tgz",
+      "integrity": "sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/object-inspect": {
+      "version": "1.13.4",
+      "resolved": "https://registry.npmjs.org/object-inspect/-/object-inspect-1.13.4.tgz",
+      "integrity": "sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/on-finished": {
+      "version": "2.4.1",
+      "resolved": "https://registry.npmjs.org/on-finished/-/on-finished-2.4.1.tgz",
+      "integrity": "sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==",
+      "license": "MIT",
+      "dependencies": {
+        "ee-first": "1.1.1"
+      },
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/parseurl": {
+      "version": "1.3.3",
+      "resolved": "https://registry.npmjs.org/parseurl/-/parseurl-1.3.3.tgz",
+      "integrity": "sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/path-to-regexp": {
+      "version": "0.1.12",
+      "resolved": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-0.1.12.tgz",
+      "integrity": "sha512-RA1GjUVMnvYFxuqovrEqZoxxW5NUZqbwKtYz/Tt7nXerk0LbLblQmrsgdeOxV5SFHf0UDggjS/bSeOZwt1pmEQ==",
+      "license": "MIT"
+    },
+    "node_modules/picomatch": {
+      "version": "2.3.1",
+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
+      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8.6"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/jonschlinkert"
+      }
+    },
+    "node_modules/proxy-addr": {
+      "version": "2.0.7",
+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
+      "license": "MIT",
+      "dependencies": {
+        "forwarded": "0.2.0",
+        "ipaddr.js": "1.9.1"
+      },
+      "engines": {
+        "node": ">= 0.10"
+      }
+    },
+    "node_modules/proxy-from-env": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/proxy-from-env/-/proxy-from-env-1.1.0.tgz",
+      "integrity": "sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==",
+      "license": "MIT"
+    },
+    "node_modules/pstree.remy": {
+      "version": "1.1.8",
+      "resolved": "https://registry.npmjs.org/pstree.remy/-/pstree.remy-1.1.8.tgz",
+      "integrity": "sha512-77DZwxQmxKnu3aR542U+X8FypNzbfJ+C5XQDk3uWjWxn6151aIMGthWYRXTqT1E5oJvg+ljaa2OJi+VfvCOQ8w==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/qs": {
+      "version": "6.14.2",
+      "resolved": "https://registry.npmjs.org/qs/-/qs-6.14.2.tgz",
+      "integrity": "sha512-V/yCWTTF7VJ9hIh18Ugr2zhJMP01MY7c5kh4J870L7imm6/DIzBsNLTXzMwUA3yZ5b/KBqLx8Kp3uRvd7xSe3Q==",
+      "license": "BSD-3-Clause",
+      "dependencies": {
+        "side-channel": "^1.1.0"
+      },
+      "engines": {
+        "node": ">=0.6"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/range-parser": {
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/range-parser/-/range-parser-1.2.1.tgz",
+      "integrity": "sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/raw-body": {
+      "version": "2.5.3",
+      "resolved": "https://registry.npmjs.org/raw-body/-/raw-body-2.5.3.tgz",
+      "integrity": "sha512-s4VSOf6yN0rvbRZGxs8Om5CWj6seneMwK3oDb4lWDH0UPhWcxwOWw5+qk24bxq87szX1ydrwylIOp2uG1ojUpA==",
+      "license": "MIT",
+      "dependencies": {
+        "bytes": "~3.1.2",
+        "http-errors": "~2.0.1",
+        "iconv-lite": "~0.4.24",
+        "unpipe": "~1.0.0"
+      },
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/readdirp": {
+      "version": "3.6.0",
+      "resolved": "https://registry.npmjs.org/readdirp/-/readdirp-3.6.0.tgz",
+      "integrity": "sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "picomatch": "^2.2.1"
+      },
+      "engines": {
+        "node": ">=8.10.0"
+      }
+    },
+    "node_modules/safe-buffer": {
+      "version": "5.2.1",
+      "resolved": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz",
+      "integrity": "sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==",
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/feross"
+        },
+        {
+          "type": "patreon",
+          "url": "https://www.patreon.com/feross"
+        },
+        {
+          "type": "consulting",
+          "url": "https://feross.org/support"
+        }
+      ],
+      "license": "MIT"
+    },
+    "node_modules/safer-buffer": {
+      "version": "2.1.2",
+      "resolved": "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz",
+      "integrity": "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==",
+      "license": "MIT"
+    },
+    "node_modules/sax": {
+      "version": "1.5.0",
+      "resolved": "https://registry.npmjs.org/sax/-/sax-1.5.0.tgz",
+      "integrity": "sha512-21IYA3Q5cQf089Z6tgaUTr7lDAyzoTPx5HRtbhsME8Udispad8dC/+sziTNugOEx54ilvatQ9YCzl4KQLPcRHA==",
+      "license": "BlueOak-1.0.0",
+      "engines": {
+        "node": ">=11.0.0"
+      }
+    },
+    "node_modules/semver": {
+      "version": "7.7.4",
+      "resolved": "https://registry.npmjs.org/semver/-/semver-7.7.4.tgz",
+      "integrity": "sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==",
+      "dev": true,
+      "license": "ISC",
+      "bin": {
+        "semver": "bin/semver.js"
+      },
+      "engines": {
+        "node": ">=10"
+      }
+    },
+    "node_modules/send": {
+      "version": "0.19.2",
+      "resolved": "https://registry.npmjs.org/send/-/send-0.19.2.tgz",
+      "integrity": "sha512-VMbMxbDeehAxpOtWJXlcUS5E8iXh6QmN+BkRX1GARS3wRaXEEgzCcB10gTQazO42tpNIya8xIyNx8fll1OFPrg==",
+      "license": "MIT",
+      "dependencies": {
+        "debug": "2.6.9",
+        "depd": "2.0.0",
+        "destroy": "1.2.0",
+        "encodeurl": "~2.0.0",
+        "escape-html": "~1.0.3",
+        "etag": "~1.8.1",
+        "fresh": "~0.5.2",
+        "http-errors": "~2.0.1",
+        "mime": "1.6.0",
+        "ms": "2.1.3",
+        "on-finished": "~2.4.1",
+        "range-parser": "~1.2.1",
+        "statuses": "~2.0.2"
+      },
+      "engines": {
+        "node": ">= 0.8.0"
+      }
+    },
+    "node_modules/send/node_modules/ms": {
+      "version": "2.1.3",
+      "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
+      "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+      "license": "MIT"
+    },
+    "node_modules/serve-static": {
+      "version": "1.16.3",
+      "resolved": "https://registry.npmjs.org/serve-static/-/serve-static-1.16.3.tgz",
+      "integrity": "sha512-x0RTqQel6g5SY7Lg6ZreMmsOzncHFU7nhnRWkKgWuMTu5NN0DR5oruckMqRvacAN9d5w6ARnRBXl9xhDCgfMeA==",
+      "license": "MIT",
+      "dependencies": {
+        "encodeurl": "~2.0.0",
+        "escape-html": "~1.0.3",
+        "parseurl": "~1.3.3",
+        "send": "~0.19.1"
+      },
+      "engines": {
+        "node": ">= 0.8.0"
+      }
+    },
+    "node_modules/setprototypeof": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.2.0.tgz",
+      "integrity": "sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==",
+      "license": "ISC"
+    },
+    "node_modules/side-channel": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/side-channel/-/side-channel-1.1.0.tgz",
+      "integrity": "sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==",
+      "license": "MIT",
+      "dependencies": {
+        "es-errors": "^1.3.0",
+        "object-inspect": "^1.13.3",
+        "side-channel-list": "^1.0.0",
+        "side-channel-map": "^1.0.1",
+        "side-channel-weakmap": "^1.0.2"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/side-channel-list": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/side-channel-list/-/side-channel-list-1.0.0.tgz",
+      "integrity": "sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==",
+      "license": "MIT",
+      "dependencies": {
+        "es-errors": "^1.3.0",
+        "object-inspect": "^1.13.3"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/side-channel-map": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/side-channel-map/-/side-channel-map-1.0.1.tgz",
+      "integrity": "sha512-VCjCNfgMsby3tTdo02nbjtM/ewra6jPHmpThenkTYh8pG9ucZ/1P8So4u4FGBek/BjpOVsDCMoLA/iuBKIFXRA==",
+      "license": "MIT",
+      "dependencies": {
+        "call-bound": "^1.0.2",
+        "es-errors": "^1.3.0",
+        "get-intrinsic": "^1.2.5",
+        "object-inspect": "^1.13.3"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/side-channel-weakmap": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/side-channel-weakmap/-/side-channel-weakmap-1.0.2.tgz",
+      "integrity": "sha512-WPS/HvHQTYnHisLo9McqBHOJk2FkHO/tlpvldyrnem4aeQp4hai3gythswg6p01oSoTl58rcpiFAjF2br2Ak2A==",
+      "license": "MIT",
+      "dependencies": {
+        "call-bound": "^1.0.2",
+        "es-errors": "^1.3.0",
+        "get-intrinsic": "^1.2.5",
+        "object-inspect": "^1.13.3",
+        "side-channel-map": "^1.0.1"
+      },
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/simple-update-notifier": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/simple-update-notifier/-/simple-update-notifier-2.0.0.tgz",
+      "integrity": "sha512-a2B9Y0KlNXl9u/vsW6sTIu9vGEpfKu2wRV6l1H3XEas/0gUIzGzBoP/IouTcUQbm9JWZLH3COxyn03TYlFax6w==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "semver": "^7.5.3"
+      },
+      "engines": {
+        "node": ">=10"
+      }
+    },
+    "node_modules/statuses": {
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/statuses/-/statuses-2.0.2.tgz",
+      "integrity": "sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/supports-color": {
+      "version": "5.5.0",
+      "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-5.5.0.tgz",
+      "integrity": "sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "has-flag": "^3.0.0"
+      },
+      "engines": {
+        "node": ">=4"
+      }
+    },
+    "node_modules/to-regex-range": {
+      "version": "5.0.1",
+      "resolved": "https://registry.npmjs.org/to-regex-range/-/to-regex-range-5.0.1.tgz",
+      "integrity": "sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "is-number": "^7.0.0"
+      },
+      "engines": {
+        "node": ">=8.0"
+      }
+    },
+    "node_modules/toidentifier": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz",
+      "integrity": "sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.6"
+      }
+    },
+    "node_modules/touch": {
+      "version": "3.1.1",
+      "resolved": "https://registry.npmjs.org/touch/-/touch-3.1.1.tgz",
+      "integrity": "sha512-r0eojU4bI8MnHr8c5bNo7lJDdI2qXlWWJk6a9EAFG7vbhTjElYhBVS3/miuE0uOuoLdb8Mc/rVfsmm6eo5o9GA==",
+      "dev": true,
+      "license": "ISC",
+      "bin": {
+        "nodetouch": "bin/nodetouch.js"
+      }
+    },
+    "node_modules/type-is": {
+      "version": "1.6.18",
+      "resolved": "https://registry.npmjs.org/type-is/-/type-is-1.6.18.tgz",
+      "integrity": "sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==",
+      "license": "MIT",
+      "dependencies": {
+        "media-typer": "0.3.0",
+        "mime-types": "~2.1.24"
+      },
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/undefsafe": {
+      "version": "2.0.5",
+      "resolved": "https://registry.npmjs.org/undefsafe/-/undefsafe-2.0.5.tgz",
+      "integrity": "sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/unpipe": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/unpipe/-/unpipe-1.0.0.tgz",
+      "integrity": "sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/utils-merge": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/utils-merge/-/utils-merge-1.0.1.tgz",
+      "integrity": "sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.4.0"
+      }
+    },
+    "node_modules/vary": {
+      "version": "1.1.2",
+      "resolved": "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz",
+      "integrity": "sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8"
+      }
+    },
+    "node_modules/xml2js": {
+      "version": "0.6.2",
+      "resolved": "https://registry.npmjs.org/xml2js/-/xml2js-0.6.2.tgz",
+      "integrity": "sha512-T4rieHaC1EXcES0Kxxj4JWgaUQHDk+qwHcYOCFHfiwKz7tOVPLq7Hjq9dM1WCMhylqMEfP7hMcOIChvotiZegA==",
+      "license": "MIT",
+      "dependencies": {
+        "sax": ">=0.6.0",
+        "xmlbuilder": "~11.0.0"
+      },
+      "engines": {
+        "node": ">=4.0.0"
+      }
+    },
+    "node_modules/xmlbuilder": {
+      "version": "11.0.1",
+      "resolved": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-11.0.1.tgz",
+      "integrity": "sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=4.0"
+      }
+    }
+  }
+}
+
+
+=== C:\Users\Administrator\Documents\vs code\kepco-bid-app\package.json ===
+{
+  "name": "kepco-bid-analyzer",
+  "version": "1.0.0",
+  "description": "?쒖쟾쨌?⑤?諛쒖쟾쨌?쒕?諛쒖쟾 蹂댁삩 ?낆같 議고쉶쨌?숈같 遺꾩꽍 ??,
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
+
+

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>보온 입찰 통합 분석기</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="hd-sub">한전 빅데이터 API 연동 · 실시간</div>
+    <div class="hd-title"><em>보온</em> 입찰 통합 조회·분석</div>
+    <div class="hd-line">한국전력 · 남부발전 · 서부발전 · 중부발전 외</div>
+    <div class="server-badge" id="serverBadge">● 연결 확인 중...</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('search')">🔍 공고 조회</button>
+    <button class="tab-btn" onclick="switchTab('analyze')">📊 낙찰 분석</button>
+  </div>
+
+  <!-- ═══ 공고 조회 탭 ═══ -->
+  <div class="tab-content active" id="tab-search">
+    <div class="panel">
+      <div class="panel-head"><span class="badge">1</span> 검색 조건</div>
+      <div class="panel-body">
+        <div class="row3">
+          <div class="field">
+            <label>검색어</label>
+            <input type="text" id="q-keyword" value="보온" placeholder="보온, 단열, 보온재...">
+          </div>
+          <div class="field">
+            <label>발주 기관</label>
+            <select id="q-company">
+              <option value="">전체 계열사</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>조회 기간</label>
+            <select id="q-days">
+              <option value="10">최근 10일</option>
+              <option value="25" selected>최근 25일</option>
+              <option value="29">최근 29일 (최대)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="searchBids()">🔍 보온 입찰공고 조회</button>
+      </div>
+    </div>
+
+    <div id="search-status"></div>
+    <div id="search-results"></div>
+    <div id="search-pager"></div>
+    <div id="analyze-trigger" style="display:none;margin-top:12px;"></div>
+  </div>
+
+  <!-- ═══ 낙찰 분석 탭 ═══ -->
+  <div class="tab-content" id="tab-analyze">
+    <div class="panel">
+      <div class="panel-head"><span class="badge">2</span> 분석 대상 공고</div>
+      <div class="panel-body">
+        <div class="row2">
+          <div class="field">
+            <label>공고명</label>
+            <input type="text" id="a-title" placeholder="공고 조회에서 선택하거나 직접 입력">
+          </div>
+          <div class="field">
+            <label>예정 가격 (원)</label>
+            <input type="text" id="a-budget" placeholder="예: 120,000,000" oninput="fmtNum(this)">
+          </div>
+          <div class="field">
+            <label>발주 기관</label>
+            <input type="text" id="a-org" placeholder="한국남부발전, 한국전력...">
+          </div>
+          <div class="field">
+            <label>낙찰 방법</label>
+            <select id="a-method">
+              <option>최저가낙찰제</option>
+              <option>적격심사낙찰제</option>
+              <option>협상에 의한 계약</option>
+              <option>제한경쟁입찰</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>공고 종류</label>
+            <select id="a-type">
+              <option>공사 (보온공사)</option>
+              <option>물품 (보온재·단열재)</option>
+              <option>용역 (유지보수)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>우리 회사 경쟁력</label>
+            <select id="a-strength">
+              <option value="보통">보통 (일반적 경쟁력)</option>
+              <option value="강함">강함 (한전 실적 다수)</option>
+              <option value="약함">약함 (첫 도전·실적 부족)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="runAnalysis()">🤖 AI 낙찰 예측 분석</button>
+      </div>
+    </div>
+
+    <div id="analysis-loading" style="display:none;" class="panel">
+      <div class="panel-body">
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+          <div style="margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--ink3);" id="a-load-msg">분석 중...</div>
+        </div>
+      </div>
+    </div>
+    <div id="analysis-result"></div>
+  </div>
+
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>
