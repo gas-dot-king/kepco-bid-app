@@ -411,7 +411,58 @@ input[type=range]::-webkit-slider-thumb {
 /* 큰 버튼 */
 .btn-lg { padding: 15px; font-size: 15px; letter-spacing: 0.5px; }
 
-/* 시뮬 배너 */
+/* 핵심 수치 배너 (기초금액 → 예정가격 → 마지노선) */
+.sim-key-banner {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; margin-bottom: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.sim-key-item {
+  flex: 1; padding: 20px 18px; text-align: center;
+  border-right: 1px solid var(--border);
+  transition: background .15s;
+}
+.sim-key-item:last-child { border-right: none; }
+.sim-key-arrow {
+  font-size: 20px; color: var(--border2); padding: 0 2px;
+  flex-shrink: 0;
+}
+.sim-key-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; font-family: var(--mono);
+  color: var(--ink3); margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.sim-key-badge {
+  font-size: 9px; background: var(--blue); color: #fff;
+  padding: 2px 6px; border-radius: 10px; letter-spacing: 0;
+  font-weight: 700; text-transform: none;
+}
+.sim-key-value {
+  font-size: 22px; font-weight: 900; font-family: var(--mono);
+  color: var(--ink); margin-bottom: 5px; letter-spacing: -0.5px;
+}
+.sim-key-sub {
+  font-size: 11px; color: var(--ink3); font-family: var(--mono);
+}
+.sim-key-sub strong { color: var(--ink2); }
+
+/* 예정가격 강조 */
+.sim-key-main {
+  background: var(--ink);
+}
+.sim-key-main .sim-key-label { color: rgba(255,255,255,.5); }
+.sim-key-main .sim-key-value { color: #fff; }
+.sim-key-main .sim-key-sub   { color: rgba(255,255,255,.55); }
+.sim-key-main .sim-key-sub strong { color: var(--amber); font-size: 13px; }
+.sim-key-highlight { font-size: 28px !important; }
+
+/* 마지노선 강조 */
+.sim-key-danger { background: #fde8e808; }
+.sim-key-danger .sim-key-value { color: var(--red); }
+.sim-key-danger .sim-key-sub   { color: var(--ink3); }
+
 .sim-banner {
   background: var(--ink); color: #fff; border-radius: 8px;
   padding: 18px 22px; margin-bottom: 16px;
@@ -496,6 +547,10 @@ input[type=range]::-webkit-slider-thumb {
   .strat-cards { grid-template-columns: 1fr; }
   .stat-grid   { grid-template-columns: repeat(3, 1fr); }
   .sim-banner  { flex-direction: column; }
+  .sim-key-banner { flex-direction: column; }
+  .sim-key-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .sim-key-item:last-child { border-bottom: none; }
+  .sim-key-arrow { transform: rotate(90deg); padding: 4px 0; }
 }
 @media(max-width:480px) {
   .radio-group { flex-direction: column; }

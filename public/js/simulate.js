@@ -152,15 +152,37 @@ function renderSimResult(r, meta) {
 
   document.getElementById('sim-result').innerHTML = `
 
-    <!-- 요약 배너 -->
+    <!-- 핵심 수치 배너 -->
+    <div class="sim-key-banner">
+      <div class="sim-key-item">
+        <div class="sim-key-label">예비가격 기초금액</div>
+        <div class="sim-key-value">${fmt(basePrice)}</div>
+        <div class="sim-key-sub">${vatIncluded ? 'VAT 포함' : 'VAT 제외'}</div>
+      </div>
+      <div class="sim-key-arrow">→</div>
+      <div class="sim-key-item sim-key-main">
+        <div class="sim-key-label">최종 예정가격 <span class="sim-key-badge">중앙값 P50</span></div>
+        <div class="sim-key-value sim-key-highlight">${fmt(r.distribution.p50)}</div>
+        <div class="sim-key-sub">기초금액 대비 <strong>${((r.distribution.p50 / basePrice - 1) * 100).toFixed(3)}%</strong></div>
+      </div>
+      <div class="sim-key-arrow">→</div>
+      <div class="sim-key-item sim-key-danger">
+        <div class="sim-key-label">낙찰 마지노선</div>
+        <div class="sim-key-value">${fmt(r.lowerCutline)}</div>
+        <div class="sim-key-sub">하한율 ${fmtR(lowerLimitRate)} 적용</div>
+      </div>
+    </div>
+
+    <!-- 조건 요약 배너 -->
     <div class="sim-banner">
       <div class="sim-banner-left">
         <div class="sim-banner-title">${title || '시뮬레이션 결과'}</div>
         <div class="sim-banner-badges">${vatBadge} ${corrBadge}</div>
         <div class="sim-banner-info">
-          기초금액 <strong>${fmt(basePrice)}</strong> &nbsp;·&nbsp;
-          하한율 <strong>${fmtR(lowerLimitRate)}</strong> &nbsp;·&nbsp;
-          마지노선 <strong style="color:var(--red)">${fmt(r.lowerCutline)}</strong>
+          경쟁사 <strong>${r.inputs.competitorCount}개사</strong> &nbsp;·&nbsp;
+          방식 <strong>${r.inputs.isAsymmetric ? 'B (비대칭)' : 'A (균등)'}</strong> &nbsp;·&nbsp;
+          쏠림 <strong>${(r.inputs.voteSkew * 100).toFixed(0)}%</strong> &nbsp;·&nbsp;
+          마진 <strong>${(r.inputs.safetyMarginRate * 100).toFixed(2)}%</strong>
         </div>
       </div>
       <div class="sim-banner-iter">
