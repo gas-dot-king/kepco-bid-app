@@ -28,14 +28,27 @@ window.addEventListener('DOMContentLoaded', async () => {
       sel.appendChild(opt);
     });
   } catch {}
+
+  // 과거 데이터 초기 캐시 로드
+  try {
+    const res = await fetch('/api/history');
+    const data = await res.json();
+    window._historyCache = data.records || [];
+    const stats = getHistoryStats();
+    const sub = document.getElementById('correctionSub');
+    if (sub && stats && stats.count > 0)
+      sub.textContent = `저장된 과거 데이터 ${stats.count}건`;
+  } catch {}
 });
 
 // ── TABS ──
+const TAB_NAMES = ['search','simulate','history','analyze'];
 function switchTab(name) {
-  ['search','analyze'].forEach((n, i) => {
+  TAB_NAMES.forEach((n, i) => {
     document.querySelectorAll('.tab-btn')[i].classList.toggle('active', n === name);
     document.getElementById('tab-' + n).classList.toggle('active', n === name);
   });
+  if (name === 'history') renderHistoryTab();
 }
 
 // ── STATUS ──

@@ -3,12 +3,50 @@ require('dotenv').config();
 const express = require('express');
 const axios   = require('axios');
 const path    = require('path');
+const fs      = require('fs');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
+
+// ── 과거 데이터 파일 경로 ──
+const HISTORY_FILE = path.join(__dirname, '../data/history.json');
+function ensureDataDir() {
+  const dir = path.join(__dirname, '../data');
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(HISTORY_FILE)) fs.writeFileSync(HISTORY_FILE, JSON.stringify({ records: [] }));
+}
+ensureDataDir();
+
+// ── 과거 데이터 조회 ──
+app.get('/api/history', (req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf-8'));
+    res.json(data);
+  } catch { res.json({ records: [] }); }
+});
+
+// ── 과거 데이터 저장 ──
+app.post('/api/history', (req, res) => {
+  try {
+    const data   = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf-8'));
+    data.records.push(req.body);
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(data, null, 2));
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── 과거 데이터 삭제 ──
+app.delete('/api/history/:id', (req, res) => {
+  try {
+    const data   = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf-8'));
+    data.records = data.records.filter(r => String(r.id) !== String(req.params.id));
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(data, null, 2));
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
 
 // ── 날짜 유틸 (YYYYMMDD) ──
 function dateStr(offsetDays = 0) {

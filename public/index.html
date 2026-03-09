@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>입찰 통합 조회 및 분석 프로그램</title>
 <link rel="stylesheet" href="/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -17,7 +18,9 @@
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('search')">🔍 공고 조회</button>
-    <button class="tab-btn" onclick="switchTab('analyze')">📊 낙찰 분석</button>
+    <button class="tab-btn" onclick="switchTab('simulate')">🎯 투찰가 시뮬레이션</button>
+    <button class="tab-btn" onclick="switchTab('history')">📂 과거 데이터</button>
+    <button class="tab-btn" onclick="switchTab('analyze')">🤖 AI 낙찰 분석</button>
   </div>
 
   <!-- ═══ 공고 조회 탭 ═══ -->
@@ -45,17 +48,219 @@
             </select>
           </div>
         </div>
-        <button class="btn btn-primary btn-full" onclick="searchBids()">🔍 보온 입찰공고 조회</button>
+        <button class="btn btn-primary btn-full" onclick="searchBids()">🔍 입찰공고 조회</button>
       </div>
     </div>
-
     <div id="search-status"></div>
     <div id="search-results"></div>
     <div id="search-pager"></div>
     <div id="analyze-trigger" style="display:none;margin-top:12px;"></div>
   </div>
 
-  <!-- ═══ 낙찰 분석 탭 ═══ -->
+  <!-- ═══ 시뮬레이션 탭 ═══ -->
+  <div class="tab-content" id="tab-simulate">
+
+    <!-- 입력 패널 -->
+    <div class="panel">
+      <div class="panel-head"><span class="badge">1</span> 시뮬레이션 입력 조건</div>
+      <div class="panel-body">
+
+        <div class="row2">
+          <!-- 예비가격기초금액 -->
+          <div class="field">
+            <label>예비가격 기초금액 (원)</label>
+            <div class="input-with-tag">
+              <input type="text" id="s-base" placeholder="예: 401,820,100" oninput="fmtNum(this)">
+              <div class="vat-toggle">
+                <label class="toggle-label">
+                  <input type="checkbox" id="s-vat" checked>
+                  <span class="toggle-track"></span>
+                  <span class="toggle-text">VAT 포함</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 낙찰하한율 -->
+          <div class="field">
+            <label>낙찰하한율 (%)</label>
+            <input type="number" id="s-limit" placeholder="예: 80.495" step="0.001" min="50" max="100">
+          </div>
+
+          <!-- 경쟁사 수 -->
+          <div class="field">
+            <label>경쟁사 수 (개사)</label>
+            <input type="number" id="s-competitor" placeholder="예: 5" min="1" max="50" value="5">
+          </div>
+
+          <!-- 공고명 (참고용) -->
+          <div class="field">
+            <label>공고명 <span style="font-weight:400;color:var(--ink3)">(참고용)</span></label>
+            <input type="text" id="s-title" placeholder="공고 조회에서 자동 입력되거나 직접 입력">
+          </div>
+        </div>
+
+        <!-- 복수예비가격 방식 -->
+        <div class="field">
+          <label>복수예비가격 생성 방식</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="s-method" value="symmetric" checked>
+              <span class="radio-box">
+                <span class="radio-title">방식 A · 균등</span>
+                <span class="radio-desc">기초금액 ±2% 범위에서 15개 균등 추첨</span>
+              </span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="s-method" value="asymmetric">
+              <span class="radio-box">
+                <span class="radio-title">방식 B · 비대칭</span>
+                <span class="radio-desc">+2%쪽 7개 / -2%쪽 8개 고정 추첨</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 투표 쏠림 슬라이더 -->
+        <div class="field">
+          <label>
+            투표 상향 쏠림 강도
+            <span class="slider-val" id="s-skew-val">중립 (0%)</span>
+          </label>
+          <div class="slider-wrap">
+            <span class="slider-edge">중립</span>
+            <input type="range" id="s-skew" min="0" max="100" value="0" step="5"
+              oninput="updateSkewLabel(this.value)">
+            <span class="slider-edge">완전상향</span>
+          </div>
+          <div class="slider-hint">실제 현장에서 응찰자들이 상단 가격으로 투표 집중 시 조정</div>
+        </div>
+
+        <!-- 안전마진 슬라이더 -->
+        <div class="field">
+          <label>
+            안전마진율
+            <span class="slider-val" id="s-margin-val">0.03%</span>
+          </label>
+          <div class="slider-wrap">
+            <span class="slider-edge">0.01%</span>
+            <input type="range" id="s-margin" min="1" max="20" value="3" step="1"
+              oninput="updateMarginLabel(this.value)">
+            <span class="slider-edge">0.20%</span>
+          </div>
+          <div class="slider-hint">과거 데이터 보정 ON 시 자동 반영됨</div>
+        </div>
+
+        <!-- 과거 데이터 보정 -->
+        <div class="field">
+          <div class="correction-bar" id="correctionBar">
+            <div class="correction-left">
+              <div class="correction-title">📊 과거 데이터 오차 보정</div>
+              <div class="correction-sub" id="correctionSub">저장된 과거 데이터 없음</div>
+            </div>
+            <label class="toggle-label">
+              <input type="checkbox" id="s-correction" onchange="toggleCorrection()">
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full btn-lg" onclick="runSimulation()">
+          🎯 10만 회 몬테카를로 시뮬레이션 실행
+        </button>
+      </div>
+    </div>
+
+    <!-- 로딩 -->
+    <div id="sim-loading" style="display:none;" class="panel">
+      <div class="panel-body">
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+          <div class="spinner-msg" id="sim-load-msg">시뮬레이션 실행 중... (10만 회)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 결과 -->
+    <div id="sim-result"></div>
+
+  </div>
+
+  <!-- ═══ 과거 데이터 탭 ═══ -->
+  <div class="tab-content" id="tab-history">
+    <div class="panel">
+      <div class="panel-head"><span class="badge">1</span> 과거 낙찰 데이터 입력</div>
+      <div class="panel-body">
+        <div class="row2">
+          <div class="field">
+            <label>공고명</label>
+            <input type="text" id="h-title" placeholder="공고명 입력">
+          </div>
+          <div class="field">
+            <label>발주기관</label>
+            <input type="text" id="h-org" placeholder="한국남부발전, 한국전력...">
+          </div>
+          <div class="field">
+            <label>예비가격 기초금액 (원)</label>
+            <input type="text" id="h-base" placeholder="예: 401,820,100" oninput="fmtNum(this)">
+          </div>
+          <div class="field">
+            <label>예정가격 (원)</label>
+            <input type="text" id="h-estimated" placeholder="실제 예정가격" oninput="fmtNum(this)">
+          </div>
+          <div class="field">
+            <label>낙찰금액 (원)</label>
+            <input type="text" id="h-bid" placeholder="실제 낙찰금액" oninput="fmtNum(this)">
+          </div>
+          <div class="field">
+            <label>낙찰하한율 (%)</label>
+            <input type="number" id="h-limit" placeholder="예: 80.495" step="0.001">
+          </div>
+          <div class="field">
+            <label>낙찰방법</label>
+            <select id="h-method">
+              <option>최저가낙찰제</option>
+              <option>적격심사낙찰제</option>
+              <option>협상에 의한 계약</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>복수예비가격 방식</label>
+            <select id="h-pricemethod">
+              <option value="symmetric">방식 A · 균등 (±2%)</option>
+              <option value="asymmetric">방식 B · 비대칭 (7상/8하)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>경쟁사 수</label>
+            <input type="number" id="h-competitor" placeholder="예: 7" min="1">
+          </div>
+          <div class="field">
+            <label>입찰일</label>
+            <input type="date" id="h-date">
+          </div>
+        </div>
+        <div class="field">
+          <label>메모</label>
+          <input type="text" id="h-memo" placeholder="특이사항, 메모 등">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="saveHistory()">💾 저장</button>
+      </div>
+    </div>
+
+    <!-- 통계 요약 -->
+    <div id="history-stats"></div>
+
+    <!-- 목록 -->
+    <div class="panel">
+      <div class="panel-head"><span class="badge">2</span> 누적 데이터 목록</div>
+      <div class="panel-body" style="padding:0">
+        <div id="history-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AI 낙찰 분석 탭 ═══ -->
   <div class="tab-content" id="tab-analyze">
     <div class="panel">
       <div class="panel-head"><span class="badge">2</span> 분석 대상 공고</div>
@@ -102,7 +307,6 @@
         <button class="btn btn-primary btn-full" onclick="runAnalysis()">🤖 AI 낙찰 예측 분석</button>
       </div>
     </div>
-
     <div id="analysis-loading" style="display:none;" class="panel">
       <div class="panel-body">
         <div class="spinner-wrap">
@@ -115,6 +319,9 @@
   </div>
 
 </div>
+<script src="/js/engine.js"></script>
+<script src="/js/simulate.js"></script>
+<script src="/js/history.js"></script>
 <script src="/js/app.js"></script>
 </body>
 </html>
