@@ -37,10 +37,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     const res = await fetch('/api/history');
     const data = await res.json();
     window._historyCache = data.records || [];
-    const stats = getHistoryStats();
-    const sub = document.getElementById('correctionSub');
-    if (sub && stats && stats.count > 0)
-      sub.textContent = `저장된 과거 데이터 ${stats.count}건`;
   } catch {}
 });
 

@@ -2,36 +2,34 @@
 // 시뮬레이션 탭 UI 컨트롤러
 
 // ── 발전소별 투표 쏠림 선택 ──
-// data-skew: -1.0 ~ +1.0 (음수=하방압력, 양수=상방압력)
+// 하방 그룹(서부·동서·남동): 하방8/상방7 → isAsymmetric=true(방식B), skew=-0.20
+// 상방 그룹(중부·남부):      하방7/상방8 → isAsymmetric=true(방식B), skew=+0.20
 const PLANT_SKEW_MAP = {
-  '서부발전': { skew: -0.20, label: '서부발전 (하방 8/상방 7)', dir: 'down' },
-  '동서발전': { skew: -0.20, label: '동서발전 (하방 8/상방 7)', dir: 'down' },
-  '남동발전': { skew: -0.20, label: '남동발전 (하방 8/상방 7)', dir: 'down' },
-  '중부발전': { skew:  0.20, label: '중부발전 (하방 7/상방 8)', dir: 'up'   },
-  '남부발전': { skew:  0.20, label: '남부발전 (하방 7/상방 8)', dir: 'up'   },
-  '중립'    : { skew:  0,    label: '중립 (기타)',               dir: 'neutral' },
+  '서부발전': { skew: -0.20, asymmetric: true,  label: '한국서부발전 (하방 8/상방 7)', dir: 'down' },
+  '동서발전': { skew: -0.20, asymmetric: true,  label: '한국동서발전 (하방 8/상방 7)', dir: 'down' },
+  '남동발전': { skew: -0.20, asymmetric: true,  label: '한국남동발전 (하방 8/상방 7)', dir: 'down' },
+  '중부발전': { skew:  0.20, asymmetric: true,  label: '한국중부발전 (하방 7/상방 8)', dir: 'up'   },
+  '남부발전': { skew:  0.20, asymmetric: true,  label: '한국남부발전 (하방 7/상방 8)', dir: 'up'   },
 };
 
 function selectPlant(btn) {
-  // 버튼 선택 토글
   document.querySelectorAll('.plant-btn').forEach(b => b.classList.remove('plant-btn-active'));
   btn.classList.add('plant-btn-active');
 
-  const name  = btn.dataset.name;
-  const skew  = parseFloat(btn.dataset.skew);
-  const info  = PLANT_SKEW_MAP[name] || { label: name, dir: 'neutral' };
+  const name = btn.dataset.name;
+  const skew = parseFloat(btn.dataset.skew);
+  const info = PLANT_SKEW_MAP[name];
+  if (!info) return;
 
-  // hidden input에 -100 ~ +100 정수로 저장 (engine은 /100 해서 사용)
-  document.getElementById('s-skew').value = Math.round(skew * 100);
+  // hidden inputs에 값 세팅
+  document.getElementById('s-skew').value       = Math.round(skew * 100);  // -100 ~ +100
+  document.getElementById('s-asymmetric').value = info.asymmetric ? '1' : '0';
 
   // 표시 텍스트
   const dirText = info.dir === 'down'
-    ? `↓ 하방압력 · 쏠림 ${Math.round(skew * 100)} (방어적 투찰 유리)`
-    : info.dir === 'up'
-    ? `↑ 상방압력 · 쏠림 +${Math.round(skew * 100)} (공격적 투찰 유리)`
-    : '◆ 중립 · 쏠림 0';
-  document.getElementById('plant-selected-info').textContent =
-    `✔ ${info.label} · ${dirText}`;
+    ? `↓ 하방압력 · 쏠림 ${Math.round(skew * 100)} — 방어적 투찰 유리`
+    : `↑ 상방압력 · 쏠림 +${Math.round(skew * 100)} — 공격적 투찰 유리`;
+  document.getElementById('plant-selected-info').textContent = `✔ ${info.label} · ${dirText}`;
 }
 
 function updateMarginLabel(val) {
@@ -39,65 +37,32 @@ function updateMarginLabel(val) {
   document.getElementById('s-margin-val').textContent = pct + '%';
 }
 
-// ── 과거 데이터 보정 토글 ──
-function toggleCorrection() {
-  const on  = document.getElementById('s-correction').checked;
-  const bar = document.getElementById('correctionBar');
-  bar.classList.toggle('correction-on', on);
-
-  if (on) {
-    const stats = getHistoryStats();
-    if (!stats || stats.count === 0) {
-      alert('저장된 과거 데이터가 없습니다.\n먼저 [과거 데이터] 탭에서 데이터를 입력해주세요.');
-      document.getElementById('s-correction').checked = false;
-      bar.classList.remove('correction-on');
-      return;
-    }
-    // 과거 오차율로 안전마진 자동 반영
-    const autoMargin = Math.max(1, Math.min(20, Math.round(Math.abs(stats.avgErrorRate) * 10000)));
-    document.getElementById('s-margin').value = autoMargin;
-    updateMarginLabel(autoMargin);
-    document.getElementById('correctionSub').textContent =
-      `${stats.count}건 데이터 반영 · 평균오차율 ${stats.avgErrorRate >= 0 ? '+' : ''}${(stats.avgErrorRate * 100).toFixed(3)}%`;
-  } else {
-    document.getElementById('s-margin').value = 3;
-    updateMarginLabel(3);
-    document.getElementById('correctionSub').textContent =
-      getHistoryStats()?.count > 0
-        ? `저장된 과거 데이터 ${getHistoryStats().count}건`
-        : '저장된 과거 데이터 없음';
-  }
-}
-
 // ── 시뮬레이션 실행 ──
 function runSimulation() {
   const baseRaw  = document.getElementById('s-base').value.replace(/,/g, '');
   const limitRaw = document.getElementById('s-limit').value;
+  const skewVal  = document.getElementById('s-skew').value;
 
   if (!baseRaw || !limitRaw) {
     alert('예비가격 기초금액과 낙찰하한율을 입력해주세요.');
     return;
   }
+  if (!skewVal || skewVal === '0') {
+    alert('발주기관을 선택해주세요.');
+    return;
+  }
 
   const basePrice       = parseInt(baseRaw);
   const lowerLimitRate  = parseFloat(limitRaw) / 100;
-  const isAsymmetric    = document.querySelector('input[name="s-method"]:checked').value === 'asymmetric';
-  const skewRaw         = parseInt(document.getElementById('s-skew').value);   // -100 ~ +100
-  const voteSkew        = skewRaw / 100;   // -1.0 ~ +1.0 (음수=하향, 양수=상향)
+  const isAsymmetric    = document.getElementById('s-asymmetric').value === '1';
+  const skewRaw         = parseInt(skewVal);          // -100 ~ +100
+  const voteSkew        = skewRaw / 100;              // -1.0 ~ +1.0
   const safetyMarginRate= parseInt(document.getElementById('s-margin').value) / 10000;
   const competitorCount = parseInt(document.getElementById('s-competitor').value) || 5;
   const title           = document.getElementById('s-title').value.trim();
-  const correctionOn    = document.getElementById('s-correction').checked;
 
   if (isNaN(basePrice) || basePrice <= 0) { alert('올바른 기초금액을 입력해주세요.'); return; }
   if (isNaN(lowerLimitRate) || lowerLimitRate <= 0) { alert('올바른 낙찰하한율을 입력해주세요.'); return; }
-
-  // 과거 오차율 보정값
-  let correctionOffset = 0;
-  if (correctionOn) {
-    const stats = getHistoryStats();
-    if (stats && stats.count > 0) correctionOffset = stats.avgErrorRate;
-  }
 
   // 로딩 표시
   document.getElementById('sim-loading').style.display = 'block';
@@ -109,7 +74,7 @@ function runSimulation() {
     try {
       const result = runBidSimulation({
         basePrice,
-        lowerLimitRate: lowerLimitRate + correctionOffset,
+        lowerLimitRate,
         isAsymmetric,
         voteSkew,
         safetyMarginRate,
@@ -117,7 +82,7 @@ function runSimulation() {
       });
 
       document.getElementById('sim-loading').style.display = 'none';
-      renderSimResult(result, { title, correctionOn, correctionOffset, basePrice, lowerLimitRate });
+      renderSimResult(result, { title, basePrice, lowerLimitRate });
     } catch(e) {
       document.getElementById('sim-loading').style.display = 'none';
       alert('시뮬레이션 오류: ' + e.message);
@@ -129,11 +94,7 @@ function runSimulation() {
 function renderSimResult(r, meta) {
   const fmt  = n => Math.round(n).toLocaleString() + '원';
   const fmtR = n => (n * 100).toFixed(3) + '%';
-  const { title, correctionOn, correctionOffset, basePrice, lowerLimitRate } = meta;
-
-  const corrBadge = correctionOn
-    ? `<span class="tag tag-b">과거데이터 보정 ON · ${correctionOffset >= 0 ? '+' : ''}${(correctionOffset * 100).toFixed(3)}%p</span>`
-    : `<span class="tag tag-gray">보정 OFF</span>`;
+  const { title, basePrice, lowerLimitRate } = meta;
 
   const vatBadge = `<span class="tag tag-gray">VAT 포함</span>`;
 
@@ -194,7 +155,7 @@ function renderSimResult(r, meta) {
     <div class="sim-banner">
       <div class="sim-banner-left">
         <div class="sim-banner-title">${title || '시뮬레이션 결과'}</div>
-        <div class="sim-banner-badges">${vatBadge} ${corrBadge}</div>
+        <div class="sim-banner-badges">${vatBadge}</div>
         <div class="sim-banner-info">
           경쟁사 <strong>${r.inputs.competitorCount}개사</strong> &nbsp;·&nbsp;
           방식 <strong>${r.inputs.isAsymmetric ? 'B (비대칭)' : 'A (균등)'}</strong> &nbsp;·&nbsp;
@@ -315,13 +276,7 @@ function copyAiPrompt() {
   const { r, meta } = window._lastSimResult;
   const fmt  = n => Math.round(n).toLocaleString();
   const fmtR = n => (n * 100).toFixed(3);
-  const { title, correctionOn, correctionOffset, basePrice, lowerLimitRate } = meta;
-
-  // 과거 데이터 요약
-  const stats   = getHistoryStats();
-  const histSummary = stats && stats.count > 0
-    ? `과거 데이터 ${stats.count}건 · 평균 낙찰률 ${(stats.avgBidRate * 100).toFixed(2)}% · 평균 오차율 ${(stats.avgErrorRate * 100).toFixed(3)}%`
-    : '과거 데이터 없음';
+  const { title, basePrice, lowerLimitRate } = meta;
 
   const prompt = `[입찰 몬테카를로 시뮬레이션 결과 - AI 분석 요청]
 
@@ -340,7 +295,6 @@ function copyAiPrompt() {
   r.inputs.voteSkew < 0  ? `하방압력(${(r.inputs.voteSkew*100).toFixed(0)}) — 방어적 투찰 유리` :
                            `상방압력(+${(r.inputs.voteSkew*100).toFixed(0)}) — 공격적 투찰 유리`
 }
-과거 데이터 보정: ${correctionOn ? `ON (${correctionOffset >= 0 ? '+' : ''}${(correctionOffset * 100).toFixed(3)}%p)` : 'OFF'}
 
 ■ 예정가격 분포 (10만 회)
 최솟값: ${fmt(r.distribution.min)}원
@@ -353,9 +307,6 @@ P90:   ${fmt(r.distribution.p90)}원
 🔴 공격형 (P10 베팅): ${fmt(r.recommendedBids.aggressive)}원 | 예정가대비 ${(r.recommendedBids.aggressive / basePrice * 100).toFixed(3)}% | 낙찰확률 ${r.winRates.aggressive}%
 🟡 최적형 (P50 중앙): ${fmt(r.recommendedBids.neutral)}원 | 예정가대비 ${(r.recommendedBids.neutral / basePrice * 100).toFixed(3)}% | 낙찰확률 ${r.winRates.neutral}%
 🟢 안정형 (P90 방어): ${fmt(r.recommendedBids.defensive)}원 | 예정가대비 ${(r.recommendedBids.defensive / basePrice * 100).toFixed(3)}% | 낙찰확률 ${r.winRates.defensive}%
-
-■ 과거 데이터 현황
-${histSummary}
 
 ---
 AI에게 요청:

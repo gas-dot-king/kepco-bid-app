@@ -91,27 +91,6 @@
           </div>
         </div>
 
-        <!-- 복수예비가격 방식 -->
-        <div class="field">
-          <label>복수예비가격 생성 방식</label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" name="s-method" value="symmetric" checked>
-              <span class="radio-box">
-                <span class="radio-title">방식 A · 균등</span>
-                <span class="radio-desc">기초금액 ±2% 범위에서 15개 균등 추첨</span>
-              </span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="s-method" value="asymmetric">
-              <span class="radio-box">
-                <span class="radio-title">방식 B · 비대칭</span>
-                <span class="radio-desc">+2%쪽 7개 / -2%쪽 8개 고정 추첨</span>
-              </span>
-            </label>
-          </div>
-        </div>
-
         <!-- 투표 쏠림 · 발전소별 기준 선택 -->
         <div class="field">
           <label>발주기관 / 투표 쏠림 기준</label>
@@ -150,19 +129,13 @@
               </button>
             </div>
 
-            <div class="plant-btns" style="margin-top:10px;">
-              <button type="button" class="plant-btn plant-btn-neutral" data-skew="0" data-name="중립" onclick="selectPlant(this)">
-                <span class="plant-name">중립 (기타 / 미선택)</span>
-                <span class="plant-formula">±2% 균등</span>
-                <span class="plant-dir plant-dir-neutral">◆ 중립</span>
-              </button>
-            </div>
 
           </div>
           <!-- 선택된 값 표시 -->
-          <div class="plant-selected" id="plant-selected-info">선택 없음 · 쏠림 0 (중립)</div>
+          <div class="plant-selected" id="plant-selected-info">발주기관을 선택해주세요</div>
           <!-- 숨겨진 실제 값 전달용 -->
           <input type="hidden" id="s-skew" value="0">
+          <input type="hidden" id="s-asymmetric" value="1">
         </div>
 
         <!-- 안전마진 슬라이더 -->
@@ -177,21 +150,7 @@
               oninput="updateMarginLabel(this.value)">
             <span class="slider-edge">0.20%</span>
           </div>
-          <div class="slider-hint">과거 데이터 보정 ON 시 자동 반영됨</div>
-        </div>
-
-        <!-- 과거 데이터 보정 -->
-        <div class="field">
-          <div class="correction-bar" id="correctionBar">
-            <div class="correction-left">
-              <div class="correction-title">📊 과거 데이터 오차 보정</div>
-              <div class="correction-sub" id="correctionSub">저장된 과거 데이터 없음</div>
-            </div>
-            <label class="toggle-label">
-              <input type="checkbox" id="s-correction" onchange="toggleCorrection()">
-              <span class="toggle-track"></span>
-            </label>
-          </div>
+          <div class="slider-hint">낙찰하한율 + 안전마진 = 최소 투찰 기준선</div>
         </div>
 
         <button class="btn btn-primary btn-full btn-lg" onclick="runSimulation()">
