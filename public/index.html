@@ -20,7 +20,7 @@
     <button class="tab-btn active" onclick="switchTab('search')">🔍 공고 조회</button>
     <button class="tab-btn" onclick="switchTab('simulate')">🎯 투찰가 시뮬레이션</button>
     <button class="tab-btn" onclick="switchTab('history')">📂 과거 데이터</button>
-    <button class="tab-btn" onclick="switchTab('analyze')">🤖 AI 낙찰 분석</button>
+
   </div>
 
   <!-- ═══ 공고 조회 탭 ═══ -->
@@ -68,17 +68,8 @@
         <div class="row2">
           <!-- 예비가격기초금액 -->
           <div class="field">
-            <label>예비가격 기초금액 (원)</label>
-            <div class="input-with-tag">
-              <input type="text" id="s-base" placeholder="예: 401,820,100" oninput="fmtNum(this)">
-              <div class="vat-toggle">
-                <label class="toggle-label">
-                  <input type="checkbox" id="s-vat" checked>
-                  <span class="toggle-track"></span>
-                  <span class="toggle-text">VAT 포함</span>
-                </label>
-              </div>
-            </div>
+            <label>예비가격 기초금액 (원) <span style="font-weight:400;color:var(--ink3);font-size:11px;">VAT 포함</span></label>
+            <input type="text" id="s-base" placeholder="예: 401,820,100" oninput="fmtNum(this)">
           </div>
 
           <!-- 낙찰하한율 -->
@@ -121,19 +112,19 @@
           </div>
         </div>
 
-        <!-- 투표 쏠림 슬라이더 -->
+        <!-- 투표 쏠림 슬라이더 (하향 ↔ 중립 ↔ 상향) -->
         <div class="field">
           <label>
-            투표 상향 쏠림 강도
-            <span class="slider-val" id="s-skew-val">중립 (0%)</span>
+            투표 쏠림 방향
+            <span class="slider-val" id="s-skew-val">중립 (0)</span>
           </label>
           <div class="slider-wrap">
-            <span class="slider-edge">중립</span>
-            <input type="range" id="s-skew" min="0" max="100" value="0" step="5"
+            <span class="slider-edge">완전하향</span>
+            <input type="range" id="s-skew" min="-100" max="100" value="0" step="5"
               oninput="updateSkewLabel(this.value)">
             <span class="slider-edge">완전상향</span>
           </div>
-          <div class="slider-hint">실제 현장에서 응찰자들이 상단 가격으로 투표 집중 시 조정</div>
+          <div class="slider-hint">음수(-) = 하단 가격 쏠림 · 0 = 중립 · 양수(+) = 상단 가격 쏠림</div>
         </div>
 
         <!-- 안전마진 슬라이더 -->
@@ -260,63 +251,7 @@
     </div>
   </div>
 
-  <!-- ═══ AI 낙찰 분석 탭 ═══ -->
-  <div class="tab-content" id="tab-analyze">
-    <div class="panel">
-      <div class="panel-head"><span class="badge">2</span> 분석 대상 공고</div>
-      <div class="panel-body">
-        <div class="row2">
-          <div class="field">
-            <label>공고명</label>
-            <input type="text" id="a-title" placeholder="공고 조회에서 선택하거나 직접 입력">
-          </div>
-          <div class="field">
-            <label>예정 가격 (원)</label>
-            <input type="text" id="a-budget" placeholder="예: 120,000,000" oninput="fmtNum(this)">
-          </div>
-          <div class="field">
-            <label>발주 기관</label>
-            <input type="text" id="a-org" placeholder="한국남부발전, 한국전력...">
-          </div>
-          <div class="field">
-            <label>낙찰 방법</label>
-            <select id="a-method">
-              <option>최저가낙찰제</option>
-              <option>적격심사낙찰제</option>
-              <option>협상에 의한 계약</option>
-              <option>제한경쟁입찰</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>공고 종류</label>
-            <select id="a-type">
-              <option>공사 (보온공사)</option>
-              <option>물품 (보온재·단열재)</option>
-              <option>용역 (유지보수)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>우리 회사 경쟁력</label>
-            <select id="a-strength">
-              <option value="보통">보통 (일반적 경쟁력)</option>
-              <option value="강함">강함 (한전 실적 다수)</option>
-              <option value="약함">약함 (첫 도전·실적 부족)</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-full" onclick="runAnalysis()">🤖 AI 낙찰 예측 분석</button>
-      </div>
-    </div>
-    <div id="analysis-loading" style="display:none;" class="panel">
-      <div class="panel-body">
-        <div class="spinner-wrap">
-          <div class="spinner"></div>
-          <div style="margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--ink3);" id="a-load-msg">분석 중...</div>
-        </div>
-      </div>
-    </div>
-    <div id="analysis-result"></div>
-  </div>
+
 
 </div>
 <script src="/js/engine.js"></script>

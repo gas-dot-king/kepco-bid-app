@@ -7,7 +7,7 @@
  * @param {number}  params.basePrice          - 예비가격기초금액 (원, VAT 포함 여부는 UI에서 표시)
  * @param {number}  params.lowerLimitRate     - 낙찰하한율 (예: 87.995% → 0.87995)
  * @param {boolean} params.isAsymmetric       - 비대칭 여부 (true: 위7/아래8, false: ±2% 균등)
- * @param {number}  params.voteSkew           - 투표 상향 쏠림 강도 0.0~1.0 (0=중립, 1=완전상향)
+ * @param {number}  params.voteSkew           - 투표 쏠림 강도 -1.0~+1.0 (음수=하향, 0=중립, 양수=상향)
  * @param {number}  params.safetyMarginRate   - 안전마진율 (기본 0.0003, 과거데이터 보정 시 동적)
  * @param {number}  params.competitorCount    - 경쟁사 수
  * @param {number}  iterations                - 시뮬레이션 횟수 (고정 100,000)
@@ -57,10 +57,14 @@ function runBidSimulation(params) {
     ].sort((a, b) => a - b);
 
     // 누적 가중치 배열 사전 계산 (O(15) 고정)
+    // voteSkew: -1(완전하향) ~ 0(중립) ~ +1(완전상향)
+    // 가중치: 낮은인덱스=낮은가격, 높은인덱스=높은가격
+    // 음수면 낮은가격에 가중치 집중, 양수면 높은가격에 집중
     const cumWeights = new Float64Array(15);
     let wSum = 0;
     for (let k = 0; k < 15; k++) {
-      wSum += 1 + voteSkew * (k / 14) * 2;
+      const w = Math.max(0.01, 1 + voteSkew * (k / 14) * 2);
+      wSum += w;
       cumWeights[k] = wSum;
     }
 
@@ -70,12 +74,12 @@ function runBidSimulation(params) {
     for (let pick = 0; pick < 4; pick++) {
       // 남은 항목 누적 가중치 재계산
       let remaining = 0;
-      for (let k = 0; k < 15; k++) if (!used[k]) remaining += 1 + voteSkew * (k / 14) * 2;
+      for (let k = 0; k < 15; k++) if (!used[k]) remaining += Math.max(0.01, 1 + voteSkew * (k / 14) * 2);
       let rand = Math.random() * remaining;
       let cumul = 0;
       for (let k = 0; k < 15; k++) {
         if (used[k]) continue;
-        cumul += 1 + voteSkew * (k / 14) * 2;
+        cumul += Math.max(0.01, 1 + voteSkew * (k / 14) * 2);
         if (rand <= cumul) {
           selected[pick] = sorted[k];
           used[k] = 1;

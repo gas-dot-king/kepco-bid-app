@@ -3,16 +3,22 @@
 
 // ── 슬라이더 레이블 업데이트 ──
 function updateSkewLabel(val) {
-  const labels = {
-    0:'중립 (0%)', 5:'약한 상향 (5%)', 10:'약한 상향 (10%)',
-    15:'약한 상향 (15%)', 20:'보통 상향 (20%)', 25:'보통 상향 (25%)',
-    30:'보통 상향 (30%)', 35:'보통 상향 (35%)', 40:'강한 상향 (40%)',
-    45:'강한 상향 (45%)', 50:'강한 상향 (50%)', 55:'강한 상향 (55%)',
-    60:'매우 강한 상향 (60%)', 70:'매우 강한 상향 (70%)',
-    80:'극단적 상향 (80%)', 90:'극단적 상향 (90%)', 100:'완전 상향 (100%)'
-  };
-  document.getElementById('s-skew-val').textContent =
-    labels[val] ?? `상향 쏠림 (${val}%)`;
+  const v = parseInt(val);
+  let text;
+  if (v === 0)        text = '중립 (0)';
+  else if (v < 0) {
+    const abs = Math.abs(v);
+    if (abs <= 20)      text = `약한 하향 (-${abs})`;
+    else if (abs <= 50) text = `보통 하향 (-${abs})`;
+    else if (abs <= 80) text = `강한 하향 (-${abs})`;
+    else                text = `완전 하향 (-${abs})`;
+  } else {
+    if (v <= 20)        text = `약한 상향 (+${v})`;
+    else if (v <= 50)   text = `보통 상향 (+${v})`;
+    else if (v <= 80)   text = `강한 상향 (+${v})`;
+    else                text = `완전 상향 (+${v})`;
+  }
+  document.getElementById('s-skew-val').textContent = text;
 }
 
 function updateMarginLabel(val) {
@@ -63,10 +69,10 @@ function runSimulation() {
   const basePrice       = parseInt(baseRaw);
   const lowerLimitRate  = parseFloat(limitRaw) / 100;
   const isAsymmetric    = document.querySelector('input[name="s-method"]:checked').value === 'asymmetric';
-  const voteSkew        = parseInt(document.getElementById('s-skew').value) / 100;
+  const skewRaw         = parseInt(document.getElementById('s-skew').value);   // -100 ~ +100
+  const voteSkew        = skewRaw / 100;   // -1.0 ~ +1.0 (음수=하향, 양수=상향)
   const safetyMarginRate= parseInt(document.getElementById('s-margin').value) / 10000;
   const competitorCount = parseInt(document.getElementById('s-competitor').value) || 5;
-  const vatIncluded     = document.getElementById('s-vat').checked;
   const title           = document.getElementById('s-title').value.trim();
   const correctionOn    = document.getElementById('s-correction').checked;
 
@@ -98,7 +104,7 @@ function runSimulation() {
       });
 
       document.getElementById('sim-loading').style.display = 'none';
-      renderSimResult(result, { title, vatIncluded, correctionOn, correctionOffset, basePrice, lowerLimitRate });
+      renderSimResult(result, { title, correctionOn, correctionOffset, basePrice, lowerLimitRate });
     } catch(e) {
       document.getElementById('sim-loading').style.display = 'none';
       alert('시뮬레이션 오류: ' + e.message);
@@ -110,15 +116,13 @@ function runSimulation() {
 function renderSimResult(r, meta) {
   const fmt  = n => Math.round(n).toLocaleString() + '원';
   const fmtR = n => (n * 100).toFixed(3) + '%';
-  const { title, vatIncluded, correctionOn, correctionOffset, basePrice, lowerLimitRate } = meta;
+  const { title, correctionOn, correctionOffset, basePrice, lowerLimitRate } = meta;
 
   const corrBadge = correctionOn
     ? `<span class="tag tag-b">과거데이터 보정 ON · ${correctionOffset >= 0 ? '+' : ''}${(correctionOffset * 100).toFixed(3)}%p</span>`
     : `<span class="tag tag-gray">보정 OFF</span>`;
 
-  const vatBadge = vatIncluded
-    ? `<span class="tag tag-gray">VAT 포함</span>`
-    : `<span class="tag tag-r">VAT 제외</span>`;
+  const vatBadge = `<span class="tag tag-gray">VAT 포함</span>`;
 
   // 전략 카드 색상
   const stratConfig = {
@@ -157,7 +161,7 @@ function renderSimResult(r, meta) {
       <div class="sim-key-item">
         <div class="sim-key-label">예비가격 기초금액</div>
         <div class="sim-key-value">${fmt(basePrice)}</div>
-        <div class="sim-key-sub">${vatIncluded ? 'VAT 포함' : 'VAT 제외'}</div>
+        <div class="sim-key-sub">VAT 포함</div>
       </div>
       <div class="sim-key-arrow">→</div>
       <div class="sim-key-item sim-key-main">
@@ -181,7 +185,7 @@ function renderSimResult(r, meta) {
         <div class="sim-banner-info">
           경쟁사 <strong>${r.inputs.competitorCount}개사</strong> &nbsp;·&nbsp;
           방식 <strong>${r.inputs.isAsymmetric ? 'B (비대칭)' : 'A (균등)'}</strong> &nbsp;·&nbsp;
-          쏠림 <strong>${(r.inputs.voteSkew * 100).toFixed(0)}%</strong> &nbsp;·&nbsp;
+          쏠림 <strong>${r.inputs.voteSkew >= 0 ? '+' : ''}${(r.inputs.voteSkew * 100).toFixed(0)}</strong> &nbsp;·&nbsp;
           마진 <strong>${(r.inputs.safetyMarginRate * 100).toFixed(2)}%</strong>
         </div>
       </div>
@@ -294,7 +298,7 @@ function copyAiPrompt() {
   const { r, meta } = window._lastSimResult;
   const fmt  = n => Math.round(n).toLocaleString();
   const fmtR = n => (n * 100).toFixed(3);
-  const { title, vatIncluded, correctionOn, correctionOffset, basePrice, lowerLimitRate } = meta;
+  const { title, correctionOn, correctionOffset, basePrice, lowerLimitRate } = meta;
 
   // 과거 데이터 요약
   const stats   = getHistoryStats();
@@ -306,7 +310,7 @@ function copyAiPrompt() {
 
 ■ 공고 정보
 공고명: ${title || '(미입력)'}
-예비가격 기초금액: ${fmt(basePrice)}원 (${vatIncluded ? 'VAT 포함' : 'VAT 제외'})
+예비가격 기초금액: ${fmt(basePrice)}원 (VAT 포함)
 낙찰하한율: ${fmtR(lowerLimitRate)}%
 낙찰 마지노선: ${fmt(r.lowerCutline)}원
 경쟁사 수: ${r.inputs.competitorCount}개사
@@ -314,7 +318,7 @@ function copyAiPrompt() {
 ■ 시뮬레이션 조건
 횟수: 10만 회 몬테카를로
 복수예비가격 방식: ${r.inputs.isAsymmetric ? '방식 B (비대칭 7상/8하)' : '방식 A (균등 ±2%)'}
-투표 상향 쏠림: ${(r.inputs.voteSkew * 100).toFixed(0)}%
+투표 쏠림: ${r.inputs.voteSkew >= 0 ? '+' : ''}${(r.inputs.voteSkew * 100).toFixed(0)} (${r.inputs.voteSkew < 0 ? '하향 쏠림' : r.inputs.voteSkew === 0 ? '중립' : '상향 쏠림'})
 과거 데이터 보정: ${correctionOn ? `ON (${correctionOffset >= 0 ? '+' : ''}${(correctionOffset * 100).toFixed(3)}%p)` : 'OFF'}
 
 ■ 예정가격 분포 (10만 회)
