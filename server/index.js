@@ -121,6 +121,16 @@ const COMPANIES = {
 
 app.get('/api/companies', (req, res) => res.json(COMPANIES));
 
+// ── 서버 상태 확인 (가벼운 헬스체크) ──
+app.get('/api/ping', (req, res) => {
+  res.json({
+    ok     : true,
+    kepco  : !!process.env.KEPCO_API_KEY,
+    gemini : !!process.env.GEMINI_API_KEY,
+    ts     : Date.now(),
+  });
+});
+
 // ── 디버그 ──
 app.get('/api/debug', async (req, res) => {
   const apiKey = process.env.KEPCO_API_KEY;

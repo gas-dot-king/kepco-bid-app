@@ -5,11 +5,15 @@ const state = { bids: [], page: 1, perPage: 10, selected: null };
 // ── INIT ──
 window.addEventListener('DOMContentLoaded', async () => {
   const badge = document.getElementById('serverBadge');
+
+  // ── 서버 상태 확인 (가벼운 ping, 외부 API 호출 없음) ──
   try {
-    const res = await fetch('/api/debug');
+    const res  = await fetch('/api/ping');
     const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    badge.textContent = `● 서버 연결됨 (최근 공고 ${data.count}건)`;
+    if (!data.ok) throw new Error('서버 오류');
+    const kepco  = data.kepco  ? '✅ 한전API' : '❌ 한전API없음';
+    const gemini = data.gemini ? '✅ GeminiAPI' : '❌ GeminiAPI없음';
+    badge.textContent = `● 서버 연결됨 · ${kepco} · ${gemini}`;
     badge.classList.add('ok');
   } catch (e) {
     badge.textContent = '● 서버 오류: ' + e.message;
@@ -466,12 +470,8 @@ function renderAnalysis(r, budget, title, org, method, type) {
 // 참가자격 텍스트 줄바꿈 포맷 (가. 나. 다. 라. 마. 바. 사. 앞에서 줄바꿈)
 function formatRestrict(text) {
   if (!text || text === '-') return '<span class="empty">-</span>';
-  const formatted = text
-    .replace(/\s*([\uac00-\u002e]?[가나다라마바사아자차카타파하]\.\s)/g, (match, p1, offset) => {
-      return offset === 0 ? p1 : '\n' + p1;
-    })
-    // 한글 자모 범위로 처리 (가~하 + 점)
-    .replace(/([^\n])\s+([가나다라마바사아자차카타파하]\.)/g, '$1\n$2');
+  // 한글 항목 기호(가. 나. 다. ...) 앞에서 줄바꿈
+  const formatted = text.replace(/([^\n])\s*([가나다라마바사아자차카타파하]\.)/g, '$1\n$2');
   return formatted
     .split('\n')
     .map(line => line.trim())
