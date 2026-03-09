@@ -1,24 +1,37 @@
 // public/js/simulate.js
 // 시뮬레이션 탭 UI 컨트롤러
 
-// ── 슬라이더 레이블 업데이트 ──
-function updateSkewLabel(val) {
-  const v = parseInt(val);
-  let text;
-  if (v === 0)        text = '중립 (0)';
-  else if (v < 0) {
-    const abs = Math.abs(v);
-    if (abs <= 20)      text = `약한 하향 (-${abs})`;
-    else if (abs <= 50) text = `보통 하향 (-${abs})`;
-    else if (abs <= 80) text = `강한 하향 (-${abs})`;
-    else                text = `완전 하향 (-${abs})`;
-  } else {
-    if (v <= 20)        text = `약한 상향 (+${v})`;
-    else if (v <= 50)   text = `보통 상향 (+${v})`;
-    else if (v <= 80)   text = `강한 상향 (+${v})`;
-    else                text = `완전 상향 (+${v})`;
-  }
-  document.getElementById('s-skew-val').textContent = text;
+// ── 발전소별 투표 쏠림 선택 ──
+// data-skew: -1.0 ~ +1.0 (음수=하방압력, 양수=상방압력)
+const PLANT_SKEW_MAP = {
+  '서부발전': { skew: -0.20, label: '서부발전 (하방 8/상방 7)', dir: 'down' },
+  '동서발전': { skew: -0.20, label: '동서발전 (하방 8/상방 7)', dir: 'down' },
+  '남동발전': { skew: -0.20, label: '남동발전 (하방 8/상방 7)', dir: 'down' },
+  '중부발전': { skew:  0.20, label: '중부발전 (하방 7/상방 8)', dir: 'up'   },
+  '남부발전': { skew:  0.20, label: '남부발전 (하방 7/상방 8)', dir: 'up'   },
+  '중립'    : { skew:  0,    label: '중립 (기타)',               dir: 'neutral' },
+};
+
+function selectPlant(btn) {
+  // 버튼 선택 토글
+  document.querySelectorAll('.plant-btn').forEach(b => b.classList.remove('plant-btn-active'));
+  btn.classList.add('plant-btn-active');
+
+  const name  = btn.dataset.name;
+  const skew  = parseFloat(btn.dataset.skew);
+  const info  = PLANT_SKEW_MAP[name] || { label: name, dir: 'neutral' };
+
+  // hidden input에 -100 ~ +100 정수로 저장 (engine은 /100 해서 사용)
+  document.getElementById('s-skew').value = Math.round(skew * 100);
+
+  // 표시 텍스트
+  const dirText = info.dir === 'down'
+    ? `↓ 하방압력 · 쏠림 ${Math.round(skew * 100)} (방어적 투찰 유리)`
+    : info.dir === 'up'
+    ? `↑ 상방압력 · 쏠림 +${Math.round(skew * 100)} (공격적 투찰 유리)`
+    : '◆ 중립 · 쏠림 0';
+  document.getElementById('plant-selected-info').textContent =
+    `✔ ${info.label} · ${dirText}`;
 }
 
 function updateMarginLabel(val) {
@@ -185,7 +198,11 @@ function renderSimResult(r, meta) {
         <div class="sim-banner-info">
           경쟁사 <strong>${r.inputs.competitorCount}개사</strong> &nbsp;·&nbsp;
           방식 <strong>${r.inputs.isAsymmetric ? 'B (비대칭)' : 'A (균등)'}</strong> &nbsp;·&nbsp;
-          쏠림 <strong>${r.inputs.voteSkew >= 0 ? '+' : ''}${(r.inputs.voteSkew * 100).toFixed(0)}</strong> &nbsp;·&nbsp;
+          쏠림 <strong>${
+            r.inputs.voteSkew === 0 ? '중립(0)' :
+            r.inputs.voteSkew < 0  ? `하방압력(${(r.inputs.voteSkew*100).toFixed(0)})` :
+                                     `상방압력(+${(r.inputs.voteSkew*100).toFixed(0)})`
+          }</strong> &nbsp;·&nbsp;
           마진 <strong>${(r.inputs.safetyMarginRate * 100).toFixed(2)}%</strong>
         </div>
       </div>
@@ -318,7 +335,11 @@ function copyAiPrompt() {
 ■ 시뮬레이션 조건
 횟수: 10만 회 몬테카를로
 복수예비가격 방식: ${r.inputs.isAsymmetric ? '방식 B (비대칭 7상/8하)' : '방식 A (균등 ±2%)'}
-투표 쏠림: ${r.inputs.voteSkew >= 0 ? '+' : ''}${(r.inputs.voteSkew * 100).toFixed(0)} (${r.inputs.voteSkew < 0 ? '하향 쏠림' : r.inputs.voteSkew === 0 ? '중립' : '상향 쏠림'})
+투표 쏠림: ${
+  r.inputs.voteSkew === 0 ? '중립(0)' :
+  r.inputs.voteSkew < 0  ? `하방압력(${(r.inputs.voteSkew*100).toFixed(0)}) — 방어적 투찰 유리` :
+                           `상방압력(+${(r.inputs.voteSkew*100).toFixed(0)}) — 공격적 투찰 유리`
+}
 과거 데이터 보정: ${correctionOn ? `ON (${correctionOffset >= 0 ? '+' : ''}${(correctionOffset * 100).toFixed(3)}%p)` : 'OFF'}
 
 ■ 예정가격 분포 (10만 회)

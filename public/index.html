@@ -112,19 +112,57 @@
           </div>
         </div>
 
-        <!-- 투표 쏠림 슬라이더 (하향 ↔ 중립 ↔ 상향) -->
+        <!-- 투표 쏠림 · 발전소별 기준 선택 -->
         <div class="field">
-          <label>
-            투표 쏠림 방향
-            <span class="slider-val" id="s-skew-val">중립 (0)</span>
-          </label>
-          <div class="slider-wrap">
-            <span class="slider-edge">완전하향</span>
-            <input type="range" id="s-skew" min="-100" max="100" value="0" step="5"
-              oninput="updateSkewLabel(this.value)">
-            <span class="slider-edge">완전상향</span>
+          <label>발주기관 / 투표 쏠림 기준</label>
+          <div class="plant-group">
+
+            <div class="plant-group-label">▼ 하방 압력 그룹 (예정가 기댓값 &lt; 기초금액 · 방어적 투찰 유리)</div>
+            <div class="plant-btns">
+              <button type="button" class="plant-btn" data-skew="-0.20" data-name="서부발전" onclick="selectPlant(this)">
+                <span class="plant-name">한국서부발전</span>
+                <span class="plant-formula">하방 8 / 상방 7</span>
+                <span class="plant-dir plant-dir-down">↓ 하방압력</span>
+              </button>
+              <button type="button" class="plant-btn" data-skew="-0.20" data-name="동서발전" onclick="selectPlant(this)">
+                <span class="plant-name">한국동서발전</span>
+                <span class="plant-formula">하방 8 / 상방 7</span>
+                <span class="plant-dir plant-dir-down">↓ 하방압력</span>
+              </button>
+              <button type="button" class="plant-btn" data-skew="-0.20" data-name="남동발전" onclick="selectPlant(this)">
+                <span class="plant-name">한국남동발전</span>
+                <span class="plant-formula">하방 8 / 상방 7</span>
+                <span class="plant-dir plant-dir-down">↓ 하방압력</span>
+              </button>
+            </div>
+
+            <div class="plant-group-label" style="margin-top:10px;">▲ 상방 압력 그룹 (예정가 기댓값 &gt; 기초금액 · 공격적 투찰 유리)</div>
+            <div class="plant-btns">
+              <button type="button" class="plant-btn" data-skew="0.20" data-name="중부발전" onclick="selectPlant(this)">
+                <span class="plant-name">한국중부발전</span>
+                <span class="plant-formula">하방 7 / 상방 8</span>
+                <span class="plant-dir plant-dir-up">↑ 상방압력</span>
+              </button>
+              <button type="button" class="plant-btn" data-skew="0.20" data-name="남부발전" onclick="selectPlant(this)">
+                <span class="plant-name">한국남부발전</span>
+                <span class="plant-formula">하방 7 / 상방 8</span>
+                <span class="plant-dir plant-dir-up">↑ 상방압력</span>
+              </button>
+            </div>
+
+            <div class="plant-btns" style="margin-top:10px;">
+              <button type="button" class="plant-btn plant-btn-neutral" data-skew="0" data-name="중립" onclick="selectPlant(this)">
+                <span class="plant-name">중립 (기타 / 미선택)</span>
+                <span class="plant-formula">±2% 균등</span>
+                <span class="plant-dir plant-dir-neutral">◆ 중립</span>
+              </button>
+            </div>
+
           </div>
-          <div class="slider-hint">음수(-) = 하단 가격 쏠림 · 0 = 중립 · 양수(+) = 상단 가격 쏠림</div>
+          <!-- 선택된 값 표시 -->
+          <div class="plant-selected" id="plant-selected-info">선택 없음 · 쏠림 0 (중립)</div>
+          <!-- 숨겨진 실제 값 전달용 -->
+          <input type="hidden" id="s-skew" value="0">
         </div>
 
         <!-- 안전마진 슬라이더 -->

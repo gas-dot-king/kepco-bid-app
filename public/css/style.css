@@ -556,3 +556,50 @@ input[type=range]::-webkit-slider-thumb {
   .radio-group { flex-direction: column; }
   .stat-grid   { grid-template-columns: 1fr 1fr; }
 }
+
+/* ═══════════════════════════════════════
+   발전소별 투표 쏠림 선택 버튼
+═══════════════════════════════════════ */
+.plant-group { display: flex; flex-direction: column; gap: 6px; }
+
+.plant-group-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  color: var(--ink3); font-family: var(--mono);
+  padding: 4px 0 2px; border-bottom: 1px solid var(--bg2);
+}
+
+.plant-btns {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+
+.plant-btn {
+  flex: 1; min-width: 140px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+  padding: 11px 14px;
+  background: var(--bg); border: 2px solid var(--border);
+  border-radius: 8px; cursor: pointer; transition: all .15s;
+  font-family: 'Noto Sans KR', sans-serif; text-align: left;
+}
+.plant-btn:hover { border-color: var(--blue); background: #f0f5fc; }
+
+.plant-btn-active { border-color: var(--blue) !important; background: #e8f0fa !important; }
+.plant-btn-active .plant-name { color: var(--blue); }
+
+/* 중립 버튼 */
+.plant-btn-neutral { border-style: dashed; }
+.plant-btn-neutral.plant-btn-active { border-color: var(--ink3) !important; background: var(--bg2) !important; }
+
+.plant-name    { font-size: 13px; font-weight: 700; color: var(--ink); }
+.plant-formula { font-size: 10px; color: var(--ink3); font-family: var(--mono); }
+
+.plant-dir { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-top: 2px; }
+.plant-dir-down    { background: #e8f0fa; color: var(--blue); }
+.plant-dir-up      { background: #fde8e8; color: var(--red); }
+.plant-dir-neutral { background: var(--bg2); color: var(--ink3); }
+
+.plant-selected {
+  margin-top: 8px; padding: 8px 12px;
+  background: var(--bg2); border-radius: 6px;
+  font-size: 11px; font-family: var(--mono); color: var(--ink2);
+  border: 1px solid var(--border);
+}
