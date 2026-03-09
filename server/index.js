@@ -124,10 +124,9 @@ app.get('/api/companies', (req, res) => res.json(COMPANIES));
 // ── 서버 상태 확인 (가벼운 헬스체크) ──
 app.get('/api/ping', (req, res) => {
   res.json({
-    ok     : true,
-    kepco  : !!process.env.KEPCO_API_KEY,
-    gemini : !!process.env.GEMINI_API_KEY,
-    ts     : Date.now(),
+    ok    : true,
+    kepco : !!process.env.KEPCO_API_KEY,
+    ts    : Date.now(),
   });
 });
 
@@ -203,76 +202,12 @@ app.get('/api/bids', async (req, res) => {
 });
 
 
-// ── AI 낙찰 분석 (Gemini) ──
-app.post('/api/analyze', async (req, res) => {
-  const { title, budget, org, method, type, strength } = req.body;
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY 미설정' });
-
-  const prompt = `당신은 한국 발전공기업 보온 분야 입찰 전문 분석가입니다.
-아래 공고를 분석하여 JSON만 반환하세요 (마크다운 없이, 순수 JSON).
-
-공고명: ${title}
-예정가격: ${Number(budget).toLocaleString()}원
-발주기관: ${org}
-낙찰방법: ${method}
-공고종류: ${type}
-우리회사경쟁력: ${strength}
-
-보온 분야 한전계열 실제 낙찰 통계:
-- 보온공사 최저가: 평균 낙찰률 87~92%, 경쟁 5~15개사
-- 보온자재 물품구매: 평균 낙찰률 82~91%, 경쟁 3~8개사
-- 적격심사: 평균 낙찰률 88~95%, 경쟁 2~6개사
-
-JSON만 반환:
-{
-  "expectedRate": 예상낙찰률숫자,
-  "expectedPrice": 예상낙찰가숫자,
-  "recommendedRate": 권장투찰률숫자,
-  "recommendedPrice": 권장투찰가숫자,
-  "probability": 낙찰가능성숫자,
-  "probabilityLabel": "한마디평가",
-  "competitorCount": 경쟁업체수숫자,
-  "competitionLevel": "치열또는보통또는한산",
-  "keyRisk": "리스크한문장",
-  "keyStrength": "기회한문장",
-  "priceRanges": [
-    {"label":"역대최저낙찰","rate":숫자,"color":"#e74c3c"},
-    {"label":"AI예상낙찰가","rate":숫자,"color":"#1a5a8a"},
-    {"label":"권장투찰가","rate":숫자,"color":"#1a7a3a"},
-    {"label":"적정상한선","rate":숫자,"color":"#aaaaaa"}
-  ],
-  "strategies": [
-    {"icon":"💡","head":"제목","desc":"설명","tag":"핵심","tagType":"r"},
-    {"icon":"📊","head":"제목","desc":"설명","tag":"중요","tagType":"b"},
-    {"icon":"⚠️","head":"제목","desc":"설명","tag":"주의","tagType":"r"},
-    {"icon":"📄","head":"제목","desc":"설명","tag":"참고","tagType":"g"}
-  ]
-}`;
-
-  try {
-    const r = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key=${apiKey}`,
-      { contents: [{ parts: [{ text: prompt }] }] },
-      { timeout: 20000 }
-    );
-    const raw  = r.data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-    const json = JSON.parse(raw.replace(/```json|```/g, '').trim());
-    return res.json(json);
-  } catch (err) {
-    console.error('[GEMINI]', err.response?.status, err.message);
-    return res.status(502).json({ error: `Gemini 오류: ${err.message}` });
-  }
-});
-
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
 
 app.listen(PORT, () => {
   console.log(`\n🔌 서버 실행 중: http://localhost:${PORT}`);
   console.log(`⚡ 한전 bigdata API: ${process.env.KEPCO_API_KEY ? '✅ 키 있음' : '❌ 키 없음'}`);
-  console.log(`🤖 Gemini API    : ${process.env.GEMINI_API_KEY ? '✅ 키 있음' : '❌ 키 없음'}`);
   console.log(`🔍 디버그: http://localhost:${PORT}/api/debug\n`);
 });
 
-// ── AI 낙찰 분석 (Gemini) ──
-// 위치: SPA fallback 앞에 추가
+
