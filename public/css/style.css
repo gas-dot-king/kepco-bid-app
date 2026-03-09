@@ -325,6 +325,17 @@ input:focus, select:focus { border-color: var(--blue); background: #fff; }
   display: flex; gap: 8px; justify-content: flex-end;
 }
 
+/* 참가자격 줄바꿈 포맷 */
+.restrict-line {
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--bg2);
+  line-height: 1.7;
+  font-size: 12px;
+  color: var(--ink2);
+}
+.restrict-line:last-child { border-bottom: none; }
+.restrict-line:first-child { padding-top: 0; }
+
 @media(max-width:600px) {
   .modal-grid { grid-template-columns: 1fr; }
   .modal-field.full { grid-column: 1; }

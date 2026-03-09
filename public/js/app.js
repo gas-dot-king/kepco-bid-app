@@ -237,7 +237,7 @@ function openModal(b) {
             <div class="modal-grid">
               <div class="modal-field full">
                 <div class="modal-field-label">참가자격 제한</div>
-                <div class="modal-field-value">${empty(b.bidAttendRestrict)}</div>
+                <div class="modal-field-value">${formatRestrict(b.bidAttendRestrict)}</div>
               </div>
             </div>
           </div>
@@ -449,6 +449,24 @@ function renderAnalysis(r, budget, title, org, method, type) {
 }
 
 // ── UTILS ──
+
+// 참가자격 텍스트 줄바꿈 포맷 (가. 나. 다. 라. 마. 바. 사. 앞에서 줄바꿈)
+function formatRestrict(text) {
+  if (!text || text === '-') return '<span class="empty">-</span>';
+  const formatted = text
+    .replace(/\s*([\uac00-\u002e]?[가나다라마바사아자차카타파하]\.\s)/g, (match, p1, offset) => {
+      return offset === 0 ? p1 : '\n' + p1;
+    })
+    // 한글 자모 범위로 처리 (가~하 + 점)
+    .replace(/([^\n])\s+([가나다라마바사아자차카타파하]\.)/g, '$1\n$2');
+  return formatted
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .map(line => `<p class="restrict-line">${line}</p>`)
+    .join('');
+}
+
 function fmtWon(n) {
   if (!n) return '-';
   if (n>=100000000) return (n/100000000).toFixed(2)+'억원';
