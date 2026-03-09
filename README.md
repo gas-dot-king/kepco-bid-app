@@ -75,3 +75,4 @@ http://localhost:3000
 - `.env` 파일은 절대 GitHub에 올리지 마세요 (`.gitignore`에 포함됨)
 - 한전 개인 API 키(`KEPCO_API_KEY`)는 재발급 후 `.env`에 입력
 - AI 분석 결과는 참고용이며, 실제 투찰 전 공고 원문 확인 필수
+- ✅ GitHub ↔ 샌드박스 동기화 테스트 성공!
