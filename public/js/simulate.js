@@ -73,7 +73,7 @@ function runSimulation() {
   const lowerLimitRate  = parseFloat(limitRaw) / 100;
   const voteSkew        = parseInt(skewVal) / 100;    // 슬라이더 -100~+100 → -1.0~+1.0
   const safetyMarginRate= parseInt(document.getElementById('s-margin').value) / 10000;
-  const competitorCount = parseInt(document.getElementById('s-competitor').value) || 5;
+  const competitorCount = parseInt(document.getElementById('s-competitor').value) || 4;
 
   if (isNaN(basePrice) || basePrice <= 0) { alert('올바른 기초금액을 입력해주세요.'); return; }
   if (isNaN(lowerLimitRate) || lowerLimitRate <= 0) { alert('올바른 낙찰하한율을 입력해주세요.'); return; }
@@ -348,7 +348,7 @@ function copyAiPrompt() {
 🟢 안정형 (P80 방어): ${fmt(r.recommendedBids.defensive)}원
 
 ■ 현재 입찰 환경 및 전략적 목표
-- 예상 경쟁사: 극저경쟁 (약 3~4개사 예상)
+- 예상 경쟁사: ${r.inputs.competitorCount}개사
 - 최우선 목표: 무리한 1위 싸움(출혈 경쟁)보다는, 무작위 난수가 상방으로 폭등하여 커트라인이 높아졌을 때 내 투찰가가 밑으로 잠겨버리는 '사전 탈락(하한선 미달)' 리스크를 100% 차단하는 상방 방어 우선 전략.
 
 ■ AI 분석 지시사항 (아래 목차대로 작성할 것)
