@@ -17,21 +17,34 @@ function selectPlant(btn) {
   btn.classList.add('plant-btn-active');
 
   const name = btn.dataset.name;
-  const skew = parseFloat(btn.dataset.skew);
   const info = PLANT_SKEW_MAP[name];
   if (!info) return;
 
-  // hidden inputs에 값 세팅
-  document.getElementById('s-skew').value       = Math.round(skew * 100);  // -100 ~ +100
-  document.getElementById('s-asymmetric').value = '1'; // 항상 비대칭 (upCount/downCount로 제어)
+  // hidden inputs에 upCount/downCount 세팅
+  document.getElementById('s-asymmetric').value = '1';
   document.getElementById('s-up-count').value   = info.upCount;
   document.getElementById('s-down-count').value = info.downCount;
 
-  // 표시 텍스트
+  // 쏠림 슬라이더를 발전소 기본값으로 자동 설정
+  const defaultSkew = Math.round(info.skew * 100); // -20 또는 +20
+  const skewSlider  = document.getElementById('s-skew');
+  skewSlider.value  = defaultSkew;
+  updateSkewLabel(defaultSkew);
+
+  // 발전소 선택 표시 텍스트
   const dirText = info.dir === 'down'
-    ? `↓ 하방압력 · 쏠림 ${Math.round(skew * 100)} — 방어적 투찰 유리`
-    : `↑ 상방압력 · 쏠림 +${Math.round(skew * 100)} — 공격적 투찰 유리`;
+    ? '↓ 하방압력 · 방어적 투찰 유리'
+    : '↑ 상방압력 · 공격적 투찰 유리';
   document.getElementById('plant-selected-info').textContent = `✔ ${info.label} · ${dirText}`;
+}
+
+function updateSkewLabel(val) {
+  const n = parseInt(val);
+  let text;
+  if (n === 0)      text = '0 (중립)';
+  else if (n > 0)   text = `+${n} (상방압력)`;
+  else              text = `${n} (하방압력)`;
+  document.getElementById('s-skew-val').textContent = text;
 }
 
 function updateMarginLabel(val) {
@@ -49,17 +62,17 @@ function runSimulation() {
     alert('예비가격 기초금액과 낙찰하한율을 입력해주세요.');
     return;
   }
-  if (!skewVal || skewVal === '0') {
+  // 발전소 선택 여부 검증 (upCount/downCount가 세팅됐는지로 판단)
+  const upCount  = parseInt(document.getElementById('s-up-count').value);
+  const downCount= parseInt(document.getElementById('s-down-count').value);
+  if (!upCount || !downCount) {
     alert('발주기관을 선택해주세요.');
     return;
   }
 
   const basePrice       = parseInt(baseRaw);
   const lowerLimitRate  = parseFloat(limitRaw) / 100;
-  const skewRaw         = parseInt(skewVal);          // -100 ~ +100
-  const voteSkew        = skewRaw / 100;              // -1.0 ~ +1.0
-  const upCount         = parseInt(document.getElementById('s-up-count').value)   || 7;
-  const downCount       = parseInt(document.getElementById('s-down-count').value) || 8;
+  const voteSkew        = parseInt(skewVal) / 100;    // 슬라이더 -100~+100 → -1.0~+1.0
   const safetyMarginRate= parseInt(document.getElementById('s-margin').value) / 10000;
   const competitorCount = parseInt(document.getElementById('s-competitor').value) || 5;
 
@@ -158,11 +171,11 @@ function renderSimResult(r, meta) {
         <div class="sim-banner-badges">${vatBadge}</div>
         <div class="sim-banner-info">
           경쟁사 <strong>${r.inputs.competitorCount}개사</strong> &nbsp;·&nbsp;
-          방식 <strong>${r.inputs.isAsymmetric ? 'B (비대칭)' : 'A (균등)'}</strong> &nbsp;·&nbsp;
+          방식 <strong>B (비대칭) · 상방 ${r.inputs.upCount}/하방 ${r.inputs.downCount}</strong> &nbsp;·&nbsp;
           쏠림 <strong>${
-            r.inputs.voteSkew === 0 ? '중립(0)' :
-            r.inputs.voteSkew < 0  ? `하방압력(${(r.inputs.voteSkew*100).toFixed(0)})` :
-                                     `상방압력(+${(r.inputs.voteSkew*100).toFixed(0)})`
+            r.inputs.voteSkew === 0 ? '0 (중립)' :
+            r.inputs.voteSkew < 0  ? `${(r.inputs.voteSkew*100).toFixed(0)} (하방압력)` :
+                                     `+${(r.inputs.voteSkew*100).toFixed(0)} (상방압력)`
           }</strong> &nbsp;·&nbsp;
           마진 <strong>${(r.inputs.safetyMarginRate * 100).toFixed(2)}%</strong>
         </div>

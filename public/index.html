@@ -127,10 +127,24 @@
           <!-- 선택된 값 표시 -->
           <div class="plant-selected" id="plant-selected-info">발주기관을 선택해주세요</div>
           <!-- 숨겨진 실제 값 전달용 -->
-          <input type="hidden" id="s-skew" value="0">
           <input type="hidden" id="s-asymmetric" value="1">
-          <input type="hidden" id="s-up-count" value="7">
-          <input type="hidden" id="s-down-count" value="8">
+          <input type="hidden" id="s-up-count" value="0">
+          <input type="hidden" id="s-down-count" value="0">
+        </div>
+
+        <!-- 투표 심리 쏠림 슬라이더 -->
+        <div class="field">
+          <label>
+            투표 심리 쏠림
+            <span class="slider-val" id="s-skew-val">0 (중립)</span>
+          </label>
+          <div class="slider-wrap">
+            <span class="slider-edge">-100</span>
+            <input type="range" id="s-skew" min="-100" max="100" step="1" value="0"
+              oninput="updateSkewLabel(this.value)">
+            <span class="slider-edge">+100</span>
+          </div>
+          <div class="slider-hint">발전소 선택 시 기본값 자동 설정 · 직접 조절 가능 (0 = 순수 통계)</div>
         </div>
 
         <!-- 안전마진 슬라이더 -->
