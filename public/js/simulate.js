@@ -192,17 +192,41 @@ function renderSimResult(r, meta) {
     <!-- 분포 및 히스토그램 -->
     <div class="res-grid">
       <div class="res-box">
-        <div class="res-box-head">예정가격 분포 통계</div>
+        <div class="res-box-head">예정가격 / 투찰가격 분포 통계</div>
         <div class="res-box-body">
           <table class="info-tbl">
-            <tr><td class="k">최솟값</td><td class="v">${fmt(r.distribution.min)}</td></tr>
-            <tr><td class="k">하위 10% (P10)</td><td class="v">${fmt(r.distribution.p10)}</td></tr>
-            <tr><td class="k">하위 30% (P30)</td><td class="v" style="color:var(--red)">${fmt(r.distribution.p30)}</td></tr>
-            <tr><td class="k">중앙값 (P50)</td><td class="v" style="color:var(--blue);font-weight:800">${fmt(r.distribution.p50)}</td></tr>
-            <tr><td class="k">상위 25% (P75)</td><td class="v">${fmt(r.distribution.p75)}</td></tr>
-            <tr><td class="k">상위 20% (P80)</td><td class="v" style="color:var(--green)">${fmt(r.distribution.p80)}</td></tr>
-            <tr><td class="k">최댓값</td><td class="v">${fmt(r.distribution.max)}</td></tr>
-            <tr><td class="k">낙찰 마지노선</td><td class="v" style="color:var(--red)">${fmt(r.lowerCutline)}</td></tr>
+            <thead>
+              <tr>
+                <th class="k"></th>
+                <th class="v" style="font-size:11px;color:var(--ink3);font-weight:600;">예정가격</th>
+                <th class="v" style="font-size:11px;color:var(--ink3);font-weight:600;">투찰가격</th>
+              </tr>
+            </thead>
+            <tbody>${(() => {
+              const bid = (est) => Math.ceil(est * r.inputs.lowerLimitRate + r.inputs.basePrice * r.inputs.safetyMarginRate);
+              const rows = [
+                { label: '최솟값',         est: r.distribution.min,  style: '' },
+                { label: '하위 10% (P10)', est: r.distribution.p10,  style: '' },
+                { label: '하위 30% (P30)', est: r.distribution.p30,  style: 'color:var(--red)' },
+                { label: '중앙값 (P50)',   est: r.distribution.p50,  style: 'color:var(--blue);font-weight:800' },
+                { label: '상위 25% (P75)', est: r.distribution.p75,  style: '' },
+                { label: '상위 20% (P80)', est: r.distribution.p80,  style: 'color:var(--green)' },
+                { label: '최댓값',         est: r.distribution.max,  style: '' },
+              ];
+              return rows.map(row => `
+                <tr>
+                  <td class="k">${row.label}</td>
+                  <td class="v" style="${row.style}">${fmt(row.est)}</td>
+                  <td class="v" style="${row.style}">${fmt(bid(row.est))}</td>
+                </tr>`).join('');
+            })()}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td class="k">낙찰 마지노선</td>
+                <td class="v" colspan="2" style="color:var(--red)">${fmt(r.lowerCutline)}</td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
