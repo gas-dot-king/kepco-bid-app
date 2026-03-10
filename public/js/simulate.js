@@ -25,11 +25,10 @@ function selectPlant(btn) {
   document.getElementById('s-up-count').value   = info.upCount;
   document.getElementById('s-down-count').value = info.downCount;
 
-  // 쏠림 슬라이더를 발전소 기본값으로 자동 설정
-  const defaultSkew = Math.round(info.skew * 100); // -20 또는 +20
+  // 쏠림 슬라이더를 항상 0 (중립)으로 초기화
   const skewSlider  = document.getElementById('s-skew');
-  skewSlider.value  = defaultSkew;
-  updateSkewLabel(defaultSkew);
+  skewSlider.value  = 0;
+  updateSkewLabel(0);
 
   // 발전소 선택 표시 텍스트
   const dirText = info.dir === 'down'
