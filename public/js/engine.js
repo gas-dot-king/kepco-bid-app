@@ -96,15 +96,17 @@ function runBidSimulation(params) {
   // 백분위 주요 포인트
   const p10 = getPercentile(0.10);
   const p25 = getPercentile(0.25);
+  const p30 = getPercentile(0.30);
   const p50 = getPercentile(0.50);
   const p75 = getPercentile(0.75);
+  const p80 = getPercentile(0.80);
   const p90 = getPercentile(0.90);
 
   // 전략별 타겟 예정가격
   const targets = {
-    aggressive : p10,  // 공격형: 예정가 낮게 깔릴 때 베팅
+    aggressive : p30,  // 공격형: 예정가 하위 30% 베팅
     neutral    : p50,  // 최적형: 중앙값 (기댓값)
-    defensive  : p90,  // 안정형: 예정가 높게 형성 방어
+    defensive  : p80,  // 안정형: 예정가 상위 80% 방어
   };
 
   // STEP 4: 최종 투찰가 계산 (하한선 + 안전마진 절상)
@@ -115,33 +117,7 @@ function runBidSimulation(params) {
   const lowerCutline = Math.ceil(p50 * lowerLimitRate);
 
   // ─────────────────────────────────────────
-  // 3. 경쟁사 시뮬레이션
-  // - 경쟁사들도 동일한 분포에서 투찰한다고 가정
-  // - 우리가 각 전략가로 투찰했을 때 1등(최저가) 확률
-  // ─────────────────────────────────────────
-  const winRates = {};
-  ['aggressive', 'neutral', 'defensive'].forEach(strategy => {
-    const ourBid = calculateBid(targets[strategy]);
-    let winCount = 0;
-    for (let i = 0; i < 10000; i++) {
-      // 경쟁사 각각 p25~p75 구간에서 랜덤 투찰 (현실적 가정)
-      let allBelowUs = true;
-      for (let c = 0; c < competitorCount; c++) {
-        const compIdx = Math.floor(Math.random() * iterations);
-        const compBid = calculateBid(estimatedPrices[compIdx]);
-        // 경쟁사가 하한선 위이면서 우리보다 낮으면 우리 탈락
-        if (compBid >= lowerCutline && compBid < ourBid) {
-          allBelowUs = false;
-          break;
-        }
-      }
-      if (allBelowUs) winCount++;
-    }
-    winRates[strategy] = Math.round(winCount / 100); // %
-  });
-
-  // ─────────────────────────────────────────
-  // 4. 히스토그램 데이터 생성 (Chart.js용)
+  // 3. 히스토그램 데이터 생성 (Chart.js용)
   // ─────────────────────────────────────────
   const BUCKET_COUNT = 50;
   const minPrice = estimatedPrices[0];
@@ -178,7 +154,7 @@ function runBidSimulation(params) {
     // 예정가격 분포
     distribution: {
       min : estimatedPrices[0],
-      p10, p25, p50, p75, p90,
+      p10, p25, p30, p50, p75, p80, p90,
       max : estimatedPrices[iterations - 1],
     },
 
@@ -194,9 +170,6 @@ function runBidSimulation(params) {
       neutral    : calculateBid(targets.neutral),
       defensive  : calculateBid(targets.defensive),
     },
-
-    // 경쟁사 대비 낙찰 확률
-    winRates,
 
     // 히스토그램
     histogram: { labels: histLabels, data: histogram, bucketSize },

@@ -103,18 +103,16 @@ function renderSimResult(r, meta) {
 
   // 전략 카드 색상
   const stratConfig = {
-    aggressive : { label:'🔴 공격형', sub:'예정가 하위 10% 베팅', color:'var(--red)',   bg:'#fde8e8' },
+    aggressive : { label:'🔴 공격형', sub:'예정가 하위 30% 베팅', color:'var(--red)',   bg:'#fde8e8' },
     neutral    : { label:'🟡 최적형', sub:'중앙값 (기댓값)',       color:'var(--amber)', bg:'#fff3e0' },
-    defensive  : { label:'🟢 안정형', sub:'예정가 상위 90% 방어', color:'var(--green)', bg:'#e8f5ec' },
+    defensive  : { label:'🟢 안정형', sub:'예정가 상위 80% 방어', color:'var(--green)', bg:'#e8f5ec' },
   };
 
   const stratHtml = ['aggressive','neutral','defensive'].map(key => {
     const cfg     = stratConfig[key];
     const bid     = r.recommendedBids[key];
     const target  = r.targets[key];
-    const win     = r.winRates[key];
     const rate    = (bid / basePrice * 100).toFixed(3);
-    const winColor= win >= 60 ? 'var(--green)' : win >= 30 ? 'var(--amber)' : 'var(--red)';
 
     return `
       <div class="strat-card" style="border-left:4px solid ${cfg.color};background:${cfg.bg}20;">
@@ -126,7 +124,6 @@ function renderSimResult(r, meta) {
         <div class="strat-card-meta">
           <span>예정가 대비 <strong>${rate}%</strong></span>
           <span>타겟 예정가 ${fmt(target)}</span>
-          <span style="color:${winColor}">낙찰확률 <strong>${win}%</strong></span>
         </div>
       </div>`;
   }).join('');
@@ -187,10 +184,10 @@ function renderSimResult(r, meta) {
           <table class="info-tbl">
             <tr><td class="k">최솟값</td><td class="v">${fmt(r.distribution.min)}</td></tr>
             <tr><td class="k">하위 10% (P10)</td><td class="v">${fmt(r.distribution.p10)}</td></tr>
-            <tr><td class="k">하위 25% (P25)</td><td class="v">${fmt(r.distribution.p25)}</td></tr>
+            <tr><td class="k">하위 30% (P30)</td><td class="v" style="color:var(--red)">${fmt(r.distribution.p30)}</td></tr>
             <tr><td class="k">중앙값 (P50)</td><td class="v" style="color:var(--blue);font-weight:800">${fmt(r.distribution.p50)}</td></tr>
             <tr><td class="k">상위 25% (P75)</td><td class="v">${fmt(r.distribution.p75)}</td></tr>
-            <tr><td class="k">상위 10% (P90)</td><td class="v">${fmt(r.distribution.p90)}</td></tr>
+            <tr><td class="k">상위 20% (P80)</td><td class="v" style="color:var(--green)">${fmt(r.distribution.p80)}</td></tr>
             <tr><td class="k">최댓값</td><td class="v">${fmt(r.distribution.max)}</td></tr>
             <tr><td class="k">낙찰 마지노선</td><td class="v" style="color:var(--red)">${fmt(r.lowerCutline)}</td></tr>
           </table>
@@ -285,7 +282,7 @@ function copyAiPrompt() {
   const selectedInfo = document.getElementById('plant-selected-info').textContent;
   const plantMatch   = selectedInfo.match(/✔ (.+?) ·/);
   const plantName    = plantMatch ? plantMatch[1] : '발주기관 선택 안 됨';
-  const asymLabel    = r.inputs.isAsymmetric ? '비대칭 방식' : '균등 방식';
+  const asymLabel    = `상방 ${r.inputs.upCount}/하방 ${r.inputs.downCount}`;
 
   // 안전마진율
   const marginPct = (r.inputs.safetyMarginRate * 100).toFixed(2);
@@ -300,15 +297,16 @@ function copyAiPrompt() {
 ■ 예정가격 분포 (10만 회)
 - 최솟값: ${fmt(r.distribution.min)}원
 - P10 (하위 10%): ${fmt(r.distribution.p10)}원
+- P30 (하위 30%): ${fmt(r.distribution.p30)}원
 - P50 (중앙값): ${fmt(r.distribution.p50)}원
 - P75 (상위 25%): ${fmt(r.distribution.p75)}원
-- P90 (상위 10%): ${fmt(r.distribution.p90)}원
+- P80 (상위 20%): ${fmt(r.distribution.p80)}원
 - 최댓값: ${fmt(r.distribution.max)}원
 
 ■ 투찰 타겟 추천가 3종 (안전마진 ${marginPct}% 적용)
-🔴공격형 (P30 방어) : ${fmt(r.recommendedBids.aggressive)}원
-🟢 최적형 (P50 방어): ${fmt(r.recommendedBids.neutral)}원
-🔵 안정형 (P90 방어): ${fmt(r.recommendedBids.defensive)}원
+🔴 공격형 (P30 방어): ${fmt(r.recommendedBids.aggressive)}원
+🟡 최적형 (P50 방어): ${fmt(r.recommendedBids.neutral)}원
+🟢 안정형 (P80 방어): ${fmt(r.recommendedBids.defensive)}원
 
 위 데이터를 바탕으로 하한선 미달 리스크를 차단할 수 있는 최종 투찰가 1개를 추천하고, 그 이유를 세밀하게 분석해 줘.`;
 
