@@ -177,7 +177,7 @@ function openModal(b) {
             <div class="modal-grid">
               <div class="modal-field">
                 <div class="modal-field-label">도급(사정)금액</div>
-                <div class="modal-field-value amount">${b.budget > 0 ? fmtWon(b.budget) : '-'}</div>
+                <div class="modal-field-value amount">${b.budget > 0 ? fmtWonFull(b.budget) : '-'}</div>
               </div>
               <div class="modal-field">
                 <div class="modal-field-label">추정금액</div>
@@ -200,7 +200,7 @@ function openModal(b) {
             <div class="modal-grid">
               <div class="modal-field">
                 <div class="modal-field-label">낙찰방법</div>
-                <div class="modal-field-value">${empty(b.competitionType)}</div>
+                <div class="modal-field-value">${empty(b.bidType)}</div>
               </div>
               <div class="modal-field">
                 <div class="modal-field-label">계약방법 (도급구분)</div>
@@ -208,7 +208,15 @@ function openModal(b) {
               </div>
               <div class="modal-field">
                 <div class="modal-field-label">입찰방법</div>
+                <div class="modal-field-value">${empty(b.vendorAwardType)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">개찰방법</div>
                 <div class="modal-field-value">${empty(b.openMethod)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">계약방법</div>
+                <div class="modal-field-value">${empty(b.competitionType)}</div>
               </div>
               <div class="modal-field">
                 <div class="modal-field-label">구매유형</div>
@@ -329,6 +337,12 @@ function fmtWon(n) {
   if (n>=100000000) return (n/100000000).toFixed(2)+'억원';
   if (n>=10000) return Math.round(n/10000).toLocaleString()+'만원';
   return n.toLocaleString()+'원';
+}
+
+// 1원 단위까지 전체 표기 (도급·사정금액 전용)
+function fmtWonFull(n) {
+  if (!n) return '-';
+  return n.toLocaleString('ko-KR') + '원';
 }
 function fmtNum(el) {
   const v = el.value.replace(/[^0-9]/g,'');
