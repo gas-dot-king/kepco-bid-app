@@ -144,7 +144,7 @@ function openModal(b) {
   // 기존 모달 제거
   document.getElementById('bid-modal')?.remove();
 
-  const fmtAmt = n => n > 0 ? fmtWon(n) : '-';
+  const fmtAmt = n => n > 0 ? fmtWonFull(n) : '-';
   const empty  = v => (!v || v === '-') ? '<span class="empty">-</span>' : v;
   const mono   = (v, cls='') => `<span class="modal-field-value ${cls} font-mono">${empty(v)}</span>`;
 
