@@ -105,6 +105,23 @@ function normalize(item) {
     // ── 참가 자격 ──
     bidAttendRestrict: item.bidAttendRestrict ?? '-',
 
+    // ── 공고 상세 정보 ──
+    noticeDate            : item.noticeDate
+                              ? item.noticeDate.slice(0, 16).replace('T',' ')
+                              : (item.createDatetime
+                                  ? item.createDatetime.slice(0, 16).replace('T',' ')
+                                  : '-'),
+    bidBeginDatetime      : item.beginDatetime
+                              ? item.beginDatetime.slice(0, 16).replace('T',' ')
+                              : '-',
+    bidEndDatetime        : item.endDatetime
+                              ? item.endDatetime.slice(0, 16).replace('T',' ')
+                              : '-',
+    placeName             : item.placeName               ?? '-',
+    contractReqDeptName   : item.contractReqDepartmentName ?? '-',
+    creatorName           : item.creatorName             ?? '-',
+    bidTypeDetail         : item.bidTypeDetail           ?? '-',
+
     // ── 첨부파일 ──
     files,
   };

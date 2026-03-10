@@ -5,11 +5,11 @@
 // 하방 그룹(서부·동서·남동): 하방8/상방7 → isAsymmetric=true(방식B), skew=-0.20
 // 상방 그룹(중부·남부):      하방7/상방8 → isAsymmetric=true(방식B), skew=+0.20
 const PLANT_SKEW_MAP = {
-  '서부발전': { skew: -0.20, asymmetric: true,  label: '한국서부발전 (하방 8/상방 7)', dir: 'down' },
-  '동서발전': { skew: -0.20, asymmetric: true,  label: '한국동서발전 (하방 8/상방 7)', dir: 'down' },
-  '남동발전': { skew: -0.20, asymmetric: true,  label: '한국남동발전 (하방 8/상방 7)', dir: 'down' },
-  '중부발전': { skew:  0.20, asymmetric: true,  label: '한국중부발전 (하방 7/상방 8)', dir: 'up'   },
-  '남부발전': { skew:  0.20, asymmetric: true,  label: '한국남부발전 (하방 7/상방 8)', dir: 'up'   },
+  '서부발전': { skew: -0.20, asymmetric: true,  label: '한국서부발전 (상방 7/하방 8)', dir: 'down' },
+  '동서발전': { skew: -0.20, asymmetric: true,  label: '한국동서발전 (상방 7/하방 8)', dir: 'down' },
+  '남동발전': { skew: -0.20, asymmetric: true,  label: '한국남동발전 (상방 7/하방 8)', dir: 'down' },
+  '중부발전': { skew:  0.20, asymmetric: true,  label: '한국중부발전 (상방 8/하방 7)', dir: 'up'   },
+  '남부발전': { skew:  0.20, asymmetric: true,  label: '한국남부발전 (상방 8/하방 7)', dir: 'up'   },
 };
 
 function selectPlant(btn) {
@@ -59,7 +59,6 @@ function runSimulation() {
   const voteSkew        = skewRaw / 100;              // -1.0 ~ +1.0
   const safetyMarginRate= parseInt(document.getElementById('s-margin').value) / 10000;
   const competitorCount = parseInt(document.getElementById('s-competitor').value) || 5;
-  const title           = document.getElementById('s-title').value.trim();
 
   if (isNaN(basePrice) || basePrice <= 0) { alert('올바른 기초금액을 입력해주세요.'); return; }
   if (isNaN(lowerLimitRate) || lowerLimitRate <= 0) { alert('올바른 낙찰하한율을 입력해주세요.'); return; }
@@ -82,7 +81,7 @@ function runSimulation() {
       });
 
       document.getElementById('sim-loading').style.display = 'none';
-      renderSimResult(result, { title, basePrice, lowerLimitRate });
+      renderSimResult(result, { basePrice, lowerLimitRate });
     } catch(e) {
       document.getElementById('sim-loading').style.display = 'none';
       alert('시뮬레이션 오류: ' + e.message);
@@ -94,7 +93,7 @@ function runSimulation() {
 function renderSimResult(r, meta) {
   const fmt  = n => Math.round(n).toLocaleString() + '원';
   const fmtR = n => (n * 100).toFixed(3) + '%';
-  const { title, basePrice, lowerLimitRate } = meta;
+  const { basePrice, lowerLimitRate } = meta;
 
   const vatBadge = `<span class="tag tag-gray">VAT 포함</span>`;
 
@@ -154,7 +153,7 @@ function renderSimResult(r, meta) {
     <!-- 조건 요약 배너 -->
     <div class="sim-banner">
       <div class="sim-banner-left">
-        <div class="sim-banner-title">${title || '시뮬레이션 결과'}</div>
+        <div class="sim-banner-title">시뮬레이션 결과</div>
         <div class="sim-banner-badges">${vatBadge}</div>
         <div class="sim-banner-info">
           경쟁사 <strong>${r.inputs.competitorCount}개사</strong> &nbsp;·&nbsp;
@@ -276,45 +275,38 @@ function copyAiPrompt() {
   const { r, meta } = window._lastSimResult;
   const fmt  = n => Math.round(n).toLocaleString();
   const fmtR = n => (n * 100).toFixed(3);
-  const { title, basePrice, lowerLimitRate } = meta;
+  const { basePrice, lowerLimitRate } = meta;
 
-  const prompt = `[입찰 몬테카를로 시뮬레이션 결과 - AI 분석 요청]
+  // 선택된 발전소 이름 추출
+  const selectedInfo = document.getElementById('plant-selected-info').textContent;
+  const plantMatch   = selectedInfo.match(/✔ (.+?) ·/);
+  const plantName    = plantMatch ? plantMatch[1] : '발주기관 선택 안 됨';
+  const asymLabel    = r.inputs.isAsymmetric ? '비대칭 방식' : '균등 방식';
 
-■ 공고 정보
-공고명: ${title || '(미입력)'}
-예비가격 기초금액: ${fmt(basePrice)}원 (VAT 포함)
-낙찰하한율: ${fmtR(lowerLimitRate)}%
-낙찰 마지노선: ${fmt(r.lowerCutline)}원
-경쟁사 수: ${r.inputs.competitorCount}개사
+  // 안전마진율
+  const marginPct = (r.inputs.safetyMarginRate * 100).toFixed(2);
 
-■ 시뮬레이션 조건
-횟수: 10만 회 몬테카를로
-복수예비가격 방식: ${r.inputs.isAsymmetric ? '방식 B (비대칭 7상/8하)' : '방식 A (균등 ±2%)'}
-투표 쏠림: ${
-  r.inputs.voteSkew === 0 ? '중립(0)' :
-  r.inputs.voteSkew < 0  ? `하방압력(${(r.inputs.voteSkew*100).toFixed(0)}) — 방어적 투찰 유리` :
-                           `상방압력(+${(r.inputs.voteSkew*100).toFixed(0)}) — 공격적 투찰 유리`
-}
+  const prompt = `[입찰 몬테카를로 시뮬레이션 통계 데이터]
+
+■ 기본 정보
+- 예비가격 기초금액: ${fmt(basePrice)}원
+- 낙찰하한율: ${fmtR(lowerLimitRate)}%
+- 복수예비가격 방식: ${plantName} (${asymLabel})
 
 ■ 예정가격 분포 (10만 회)
-최솟값: ${fmt(r.distribution.min)}원
-P10:   ${fmt(r.distribution.p10)}원
-P50:   ${fmt(r.distribution.p50)}원 (중앙값)
-P90:   ${fmt(r.distribution.p90)}원
-최댓값: ${fmt(r.distribution.max)}원
+- 최솟값: ${fmt(r.distribution.min)}원
+- P10 (하위 10%): ${fmt(r.distribution.p10)}원
+- P50 (중앙값): ${fmt(r.distribution.p50)}원
+- P75 (상위 25%): ${fmt(r.distribution.p75)}원
+- P90 (상위 10%): ${fmt(r.distribution.p90)}원
+- 최댓값: ${fmt(r.distribution.max)}원
 
-■ 투찰 추천가 3종
-🔴 공격형 (P10 베팅): ${fmt(r.recommendedBids.aggressive)}원 | 예정가대비 ${(r.recommendedBids.aggressive / basePrice * 100).toFixed(3)}% | 낙찰확률 ${r.winRates.aggressive}%
-🟡 최적형 (P50 중앙): ${fmt(r.recommendedBids.neutral)}원 | 예정가대비 ${(r.recommendedBids.neutral / basePrice * 100).toFixed(3)}% | 낙찰확률 ${r.winRates.neutral}%
-🟢 안정형 (P90 방어): ${fmt(r.recommendedBids.defensive)}원 | 예정가대비 ${(r.recommendedBids.defensive / basePrice * 100).toFixed(3)}% | 낙찰확률 ${r.winRates.defensive}%
+■ 투찰 타겟 추천가 3종 (안전마진 ${marginPct}% 적용)
+🔴공격형 (P30 방어) : ${fmt(r.recommendedBids.aggressive)}원
+🟢 최적형 (P50 방어): ${fmt(r.recommendedBids.neutral)}원
+🔵 안정형 (P90 방어): ${fmt(r.recommendedBids.defensive)}원
 
----
-AI에게 요청:
-위 시뮬레이션 결과를 바탕으로 다음을 분석해줘.
-1. 이번 입찰의 경쟁 강도 평가
-2. 세 가지 전략 중 이번 공고에 가장 적합한 전략 추천 및 이유
-3. 주요 리스크 요인
-4. 최종 투찰가 1원 단위 추천`;
+위 데이터를 바탕으로 하한선 미달 리스크를 차단할 수 있는 최종 투찰가 1개를 추천하고, 그 이유를 세밀하게 분석해 줘.`;
 
   navigator.clipboard.writeText(prompt).then(() => {
     const btn = document.querySelector('.copy-panel .btn');
@@ -323,7 +315,6 @@ AI에게 요청:
     btn.style.background = 'var(--green)';
     setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
   }).catch(() => {
-    // 클립보드 API 실패 시 textarea로 대체
     const ta = document.createElement('textarea');
     ta.value = prompt;
     document.body.appendChild(ta);
@@ -336,7 +327,6 @@ AI에게 요청:
 
 // ── 공고 조회에서 시뮬레이션으로 연결 ──
 function goSimulateFromModal(bid) {
-  document.getElementById('s-title').value = bid.title || '';
   if (bid.preBidPrice && bid.preBidPrice > 0) {
     document.getElementById('s-base').value = bid.preBidPrice.toLocaleString();
   }
