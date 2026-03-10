@@ -2,14 +2,14 @@
 // 시뮬레이션 탭 UI 컨트롤러
 
 // ── 발전소별 투표 쏠림 선택 ──
-// 하방 그룹(서부·동서·남동): 하방8/상방7 → isAsymmetric=true(방식B), skew=-0.20
-// 상방 그룹(중부·남부):      하방7/상방8 → isAsymmetric=true(방식B), skew=+0.20
+// 하방 그룹(서부·동서·남동): 상방7/하방8, skew=-0.20
+// 상방 그룹(중부·남부):      상방8/하방7, skew=+0.20
 const PLANT_SKEW_MAP = {
-  '서부발전': { skew: -0.20, asymmetric: true,  label: '한국서부발전 (상방 7/하방 8)', dir: 'down' },
-  '동서발전': { skew: -0.20, asymmetric: true,  label: '한국동서발전 (상방 7/하방 8)', dir: 'down' },
-  '남동발전': { skew: -0.20, asymmetric: true,  label: '한국남동발전 (상방 7/하방 8)', dir: 'down' },
-  '중부발전': { skew:  0.20, asymmetric: true,  label: '한국중부발전 (상방 8/하방 7)', dir: 'up'   },
-  '남부발전': { skew:  0.20, asymmetric: true,  label: '한국남부발전 (상방 8/하방 7)', dir: 'up'   },
+  '서부발전': { skew: -0.20, upCount: 7, downCount: 8, label: '한국서부발전 (상방 7/하방 8)', dir: 'down' },
+  '동서발전': { skew: -0.20, upCount: 7, downCount: 8, label: '한국동서발전 (상방 7/하방 8)', dir: 'down' },
+  '남동발전': { skew: -0.20, upCount: 7, downCount: 8, label: '한국남동발전 (상방 7/하방 8)', dir: 'down' },
+  '중부발전': { skew:  0.20, upCount: 8, downCount: 7, label: '한국중부발전 (상방 8/하방 7)', dir: 'up'   },
+  '남부발전': { skew:  0.20, upCount: 8, downCount: 7, label: '한국남부발전 (상방 8/하방 7)', dir: 'up'   },
 };
 
 function selectPlant(btn) {
@@ -23,7 +23,9 @@ function selectPlant(btn) {
 
   // hidden inputs에 값 세팅
   document.getElementById('s-skew').value       = Math.round(skew * 100);  // -100 ~ +100
-  document.getElementById('s-asymmetric').value = info.asymmetric ? '1' : '0';
+  document.getElementById('s-asymmetric').value = '1'; // 항상 비대칭 (upCount/downCount로 제어)
+  document.getElementById('s-up-count').value   = info.upCount;
+  document.getElementById('s-down-count').value = info.downCount;
 
   // 표시 텍스트
   const dirText = info.dir === 'down'
@@ -54,9 +56,10 @@ function runSimulation() {
 
   const basePrice       = parseInt(baseRaw);
   const lowerLimitRate  = parseFloat(limitRaw) / 100;
-  const isAsymmetric    = document.getElementById('s-asymmetric').value === '1';
   const skewRaw         = parseInt(skewVal);          // -100 ~ +100
   const voteSkew        = skewRaw / 100;              // -1.0 ~ +1.0
+  const upCount         = parseInt(document.getElementById('s-up-count').value)   || 7;
+  const downCount       = parseInt(document.getElementById('s-down-count').value) || 8;
   const safetyMarginRate= parseInt(document.getElementById('s-margin').value) / 10000;
   const competitorCount = parseInt(document.getElementById('s-competitor').value) || 5;
 
@@ -74,7 +77,8 @@ function runSimulation() {
       const result = runBidSimulation({
         basePrice,
         lowerLimitRate,
-        isAsymmetric,
+        upCount,
+        downCount,
         voteSkew,
         safetyMarginRate,
         competitorCount,

@@ -6,7 +6,8 @@
  * @param {object} params
  * @param {number}  params.basePrice          - 예비가격기초금액 (원, VAT 포함 여부는 UI에서 표시)
  * @param {number}  params.lowerLimitRate     - 낙찰하한율 (예: 87.995% → 0.87995)
- * @param {boolean} params.isAsymmetric       - 비대칭 여부 (true: 위7/아래8, false: ±2% 균등)
+ * @param {number}  params.upCount            - +구간(기초금액~+2%) 난수 개수 (예: 서부=7, 중부=8)
+ * @param {number}  params.downCount          - -구간(기초금액~-2%) 난수 개수 (예: 서부=8, 중부=7)
  * @param {number}  params.voteSkew           - 투표 쏠림 강도 -1.0~+1.0 (음수=하향, 0=중립, 양수=상향)
  * @param {number}  params.safetyMarginRate   - 안전마진율 (기본 0.0003, 과거데이터 보정 시 동적)
  * @param {number}  params.competitorCount    - 경쟁사 수
@@ -16,7 +17,8 @@ function runBidSimulation(params) {
   const {
     basePrice,
     lowerLimitRate,
-    isAsymmetric      = false,
+    upCount           = 7,      // +구간 개수 (기본: 하방압력 그룹 기준)
+    downCount         = 8,      // -구간 개수
     voteSkew          = 0.0,    // 0: 중립, 1: 완전 상향 쏠림
     safetyMarginRate  = 0.0003,
     competitorCount   = 5,
@@ -31,20 +33,11 @@ function runBidSimulation(params) {
   for (let i = 0; i < iterations; i++) {
     const prelimPrices = new Float64Array(15);
 
-    // STEP 1: 복수예비가격 15개 생성
-    if (isAsymmetric) {
-      // 방식 B: 위(+구간) 7개, 아래(-구간) 8개
-      for (let j = 0; j < 7; j++)
-        prelimPrices[j] = Math.round(basePrice * (1 + Math.random() * 0.02));
-      for (let j = 7; j < 15; j++)
-        prelimPrices[j] = Math.round(basePrice * (1 - Math.random() * 0.02));
-    } else {
-      // 방식 A: ±2% 균등
-      for (let j = 0; j < 15; j++) {
-        const rate = (Math.random() * 0.04) - 0.02;
-        prelimPrices[j] = Math.round(basePrice * (1 + rate));
-      }
-    }
+    // STEP 1: 복수예비가격 15개 생성 (upCount개 +구간, downCount개 -구간)
+    for (let j = 0; j < upCount; j++)
+      prelimPrices[j] = Math.round(basePrice * (1 + Math.random() * 0.02));
+    for (let j = upCount; j < upCount + downCount; j++)
+      prelimPrices[j] = Math.round(basePrice * (1 - Math.random() * 0.02));
 
     // STEP 2: 투표 시뮬레이션 (가중치 적용 - 최적화 버전)
     // voteSkew=0: 완전 랜덤(균등), voteSkew=1: 상단 가격에 완전 쏠림
@@ -174,7 +167,8 @@ function runBidSimulation(params) {
     inputs: {
       basePrice,
       lowerLimitRate,
-      isAsymmetric,
+      upCount,
+      downCount,
       voteSkew,
       safetyMarginRate,
       competitorCount,
