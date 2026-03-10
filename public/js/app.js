@@ -32,22 +32,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   } catch {}
 
-  // 과거 데이터 초기 캐시 로드
-  try {
-    const res = await fetch('/api/history');
-    const data = await res.json();
-    window._historyCache = data.records || [];
-  } catch {}
 });
 
 // ── TABS ──
-const TAB_NAMES = ['search','simulate','history'];
+const TAB_NAMES = ['search','simulate'];
 function switchTab(name) {
   TAB_NAMES.forEach((n, i) => {
     document.querySelectorAll('.tab-btn')[i].classList.toggle('active', n === name);
     document.getElementById('tab-' + n).classList.toggle('active', n === name);
   });
-  if (name === 'history') renderHistoryTab();
 }
 
 // ── STATUS ──
@@ -239,6 +232,41 @@ function openModal(b) {
               <div class="modal-field">
                 <div class="modal-field-label">납기일</div>
                 <div class="modal-field-value date">${empty(b.deliveryDueDate)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 공고 정보 -->
+          <div class="modal-section">
+            <div class="modal-section-title">🏢 공고 정보</div>
+            <div class="modal-grid">
+              <div class="modal-field">
+                <div class="modal-field-label">공고등록일시</div>
+                <div class="modal-field-value date">${empty(b.noticeDate)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">투찰시작일시</div>
+                <div class="modal-field-value date">${empty(b.bidBeginDatetime)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">입찰 종료 일시</div>
+                <div class="modal-field-value date">${empty(b.bidEndDatetime)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">발주기관 정식 명칭</div>
+                <div class="modal-field-value">${empty(b.placeName)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">계약의뢰부서</div>
+                <div class="modal-field-value">${empty(b.contractReqDeptName)}</div>
+              </div>
+              <div class="modal-field">
+                <div class="modal-field-label">계약담당자</div>
+                <div class="modal-field-value">${empty(b.creatorName)}</div>
+              </div>
+              <div class="modal-field full">
+                <div class="modal-field-label">낙찰자결정방법 상세</div>
+                <div class="modal-field-value">${empty(b.bidTypeDetail)}</div>
               </div>
             </div>
           </div>
