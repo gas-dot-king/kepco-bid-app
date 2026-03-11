@@ -220,8 +220,9 @@ app.get('/api/bids', async (req, res) => {
 
 // 날짜 유틸 (YYYYMMDDHHmm 형식, 나라장터 API용)
 function g2bDateStr(offsetDays = 0, endOfDay = false) {
+  // KST(UTC+9) 기준으로 날짜 계산 — toISOString()은 UTC 기준이라 한국 날짜와 다를 수 있음
   const d = new Date();
-  d.setDate(d.getDate() + offsetDays);
+  d.setTime(d.getTime() + 9 * 60 * 60 * 1000 + offsetDays * 24 * 60 * 60 * 1000);
   const ymd = d.toISOString().slice(0, 10).replace(/-/g, '');
   return ymd + (endOfDay ? '2359' : '0000');
 }
@@ -348,24 +349,33 @@ app.get('/api/g2b/bids', async (req, res) => {
   const svcPath = G2B_SERVICE[type]?.bid ?? G2B_SERVICE['용역'].bid;
 
   try {
-    const params = {
-      ServiceKey  : apiKey,
-      pageNo      : 1,
-      numOfRows   : 100,
-      type        : 'json',
-      inqryDiv    : 1,                          // 1=등록일시
-      inqryBgnDt  : g2bDateStr(-parseInt(days), false),
-      inqryEndDt  : g2bDateStr(0, true),
-    };
+    // ⚠️ ServiceKey는 URL에 직접 삽입 — axios params로 보내면 +/= 이중인코딩 → 401 오류
+    const otherParams = new URLSearchParams({
+      pageNo     : 1,
+      numOfRows  : 100,
+      type       : 'json',
+      inqryDiv   : 1,
+      inqryBgnDt : g2bDateStr(-parseInt(days), false),
+      inqryEndDt : g2bDateStr(0, true),
+    }).toString();
+    const url = `${G2B_BASE}/${svcPath}?ServiceKey=${apiKey}&${otherParams}`;
 
-    const r = await axios.get(`${G2B_BASE}/${svcPath}`, { params, timeout: 15000 });
+    console.log('[G2B BID] URL:', url.replace(apiKey, 'KEY***'));
+    const r = await axios.get(url, { timeout: 15000 });
+    console.log('[G2B BID] status:', r.status, '/ data type:', typeof r.data);
 
     let raw = [];
-    // 응답 구조: response.body.items (배열 또는 단일 객체)
+    // 응답 구조: response.body.items 또는 response.body.items.item
     const body = r.data?.response?.body;
     if (body) {
-      const items = body.items?.item ?? body.items ?? [];
-      raw = Array.isArray(items) ? items : [items];
+      const it = body.items;
+      if (it) {
+        const arr = it.item ?? it;
+        raw = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? [arr] : []);
+      }
+    } else {
+      // 일부 오류 응답은 XML/HTML로 오는 경우 대비
+      console.warn('[G2B BID] body 없음. raw r.data:', JSON.stringify(r.data).slice(0, 300));
     }
 
     const filtered = keyword
@@ -378,9 +388,12 @@ app.get('/api/g2b/bids', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('[G2B BID]', err.response?.status, err.message);
+    const status = err.response?.status;
+    const detail = err.response?.data ? JSON.stringify(err.response.data).slice(0, 200) : err.message;
+    console.error('[G2B BID]', status, detail);
     return res.status(502).json({
-      error: `나라장터 API 오류(${err.response?.status ?? err.code}): ${err.message}`,
+      error: `나라장터 입찰공고 API 오류(${status ?? err.code}): ${err.message}`,
+      detail,
       items: [],
     });
   }
@@ -402,23 +415,31 @@ app.get('/api/g2b/results', async (req, res) => {
   const svcPath = G2B_SERVICE[type]?.result ?? G2B_SERVICE['용역'].result;
 
   try {
-    const params = {
-      ServiceKey  : apiKey,
-      pageNo      : 1,
-      numOfRows   : 100,
-      type        : 'json',
-      inqryDiv    : 1,
-      inqryBgnDt  : g2bDateStr(-parseInt(days), false),
-      inqryEndDt  : g2bDateStr(0, true),
-    };
+    // ⚠️ ServiceKey는 URL에 직접 삽입 — axios params로 보내면 이중인코딩 → 401 오류
+    const otherParams = new URLSearchParams({
+      pageNo     : 1,
+      numOfRows  : 100,
+      type       : 'json',
+      inqryDiv   : 1,
+      inqryBgnDt : g2bDateStr(-parseInt(days), false),
+      inqryEndDt : g2bDateStr(0, true),
+    }).toString();
+    const url = `${G2B_RESULT_BASE}/${svcPath}?ServiceKey=${apiKey}&${otherParams}`;
 
-    const r = await axios.get(`${G2B_RESULT_BASE}/${svcPath}`, { params, timeout: 15000 });
+    console.log('[G2B RESULT] URL:', url.replace(apiKey, 'KEY***'));
+    const r = await axios.get(url, { timeout: 15000 });
+    console.log('[G2B RESULT] status:', r.status, '/ data type:', typeof r.data);
 
     let raw = [];
     const body = r.data?.response?.body;
     if (body) {
-      const items = body.items?.item ?? body.items ?? [];
-      raw = Array.isArray(items) ? items : [items];
+      const it = body.items;
+      if (it) {
+        const arr = it.item ?? it;
+        raw = Array.isArray(arr) ? arr : (arr && typeof arr === 'object' ? [arr] : []);
+      }
+    } else {
+      console.warn('[G2B RESULT] body 없음. raw r.data:', JSON.stringify(r.data).slice(0, 300));
     }
 
     const filtered = keyword
@@ -431,9 +452,12 @@ app.get('/api/g2b/results', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('[G2B RESULT]', err.response?.status, err.message);
+    const status = err.response?.status;
+    const detail = err.response?.data ? JSON.stringify(err.response.data).slice(0, 200) : err.message;
+    console.error('[G2B RESULT]', status, detail);
     return res.status(502).json({
-      error: `나라장터 낙찰정보 API 오류(${err.response?.status ?? err.code}): ${err.message}`,
+      error: `나라장터 낙찰정보 API 오류(${status ?? err.code}): ${err.message}`,
+      detail,
       items: [],
     });
   }
