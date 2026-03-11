@@ -82,16 +82,18 @@ function normalize(item) {
     source    : COMPANY[item.companyId] ?? item.companyId ?? '한전계열',
 
     // ── 금액 정보 ──
-    budget          : parseFloat(item.presumedPrice    ?? item.estimatedPrice ?? 0),  // 도급(사정)금액
-    estimatedPrice  : parseFloat(item.estimatedPrice   ?? 0),   // 추정금액
-    preBidPrice     : parseFloat(item.preBidPrice      ?? 0),   // 예비가격초기금액
-    assessmentAmount: parseFloat(item.assessmentAmount ?? 0),   // 사정금액
+    budget          : parseFloat(item.presumedPrice         ?? 0),  // 도급(사정)금액
+    estimatedPrice  : parseFloat(item.presumedAmount        ?? 0),  // 추정금액
+    preBidPrice     : parseFloat(item.estimatedPriceBasicAmount ?? 0), // 예비가격기초금액
+    assessmentAmount: parseFloat(item.approximateAmount     ?? 0),  // 사정금액
 
     // ── 방법 정보 ──
-    contractType  : item.contractType   ?? '-',   // 도급구분
-    purchaseType  : item.purchaseType   ?? '-',   // 계약방법
-    openMethod    : item.openMethod     ?? '-',   // 입찰방법
-    competitionType: item.competitionType ?? '-', // 낙찰방법
+    contractType  : item.itemType        ?? '-',   // 도급구분
+    purchaseType  : item.purchaseType    ?? '-',   // 구매유형
+    openMethod    : item.openMethod      ?? '-',   // 개찰방법
+    vendorAwardType: item.vendorAwardType ?? '-',  // 입찰방법
+    competitionType: item.competitionType ?? '-',  // 계약방법
+    bidType       : item.bidType         ?? '-',   // 낙찰방법
 
     // ── 일정 정보 ──
     bidBegin  : item.bidAttendReqBeginDatetime
@@ -170,7 +172,7 @@ app.get('/api/debug', async (req, res) => {
 // ── 메인 입찰 조회 API ──
 app.get('/api/bids', async (req, res) => {
   const {
-    keyword    = '보온',
+    keyword    = '',
     companyId  = '',      // 빈 문자열 = 전체
     days       = 25,
     futureDays = 4,

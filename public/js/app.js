@@ -54,7 +54,7 @@ function showStatus(id, type, msg, loading = false) {
 
 // ── SEARCH ──
 async function searchBids() {
-  const keyword   = document.getElementById('q-keyword').value.trim() || '보온';
+  const keyword   = document.getElementById('q-keyword').value.trim();
   const companyId = document.getElementById('q-company').value;
   const days      = document.getElementById('q-days').value;
 
@@ -62,9 +62,11 @@ async function searchBids() {
   document.getElementById('analyze-trigger').style.display = 'none';
   document.getElementById('search-results').innerHTML = '';
   document.getElementById('search-pager').innerHTML   = '';
-  showStatus('search-status', 'info', `"${keyword}" 조회 중...`, true);
+  const label = keyword || '전체';
+  showStatus('search-status', 'info', `"${label}" 조회 중...`, true);
 
-  const params = new URLSearchParams({ keyword, days });
+  const params = new URLSearchParams({ days });
+  if (keyword) params.set('keyword', keyword);
   if (companyId) params.set('companyId', companyId);
 
   try {
@@ -75,7 +77,7 @@ async function searchBids() {
     state.bids = data.items || [];
 
     if (state.bids.length === 0) {
-      showStatus('search-status', 'info', `"${keyword}" 검색 결과가 없습니다.`);
+      showStatus('search-status', 'info', `"${label}" 검색 결과가 없습니다.`);
       return;
     }
     showStatus('search-status', 'success', `총 ${data.total}건 조회됨`);
