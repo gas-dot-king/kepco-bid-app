@@ -72,23 +72,37 @@ function renderG2bBidPage() {
   const html = slice.map(b => `
     <div class="g2b-card">
       <div class="g2b-card-head">
-        <span class="g2b-badge">${b.ntceKindNm || '공고'}</span>
+        <span class="g2b-badge">${b.ntceKindNm !== '-' ? b.ntceKindNm : '공고'}</span>
+        ${b.reNtceYn === 'Y' ? '<span class="g2b-badge g2b-badge-renew">재공고</span>' : ''}
+        ${b.intrbidYn === 'Y' ? '<span class="g2b-badge g2b-badge-intl">국제</span>' : ''}
         <span class="g2b-org">${b.org}</span>
-        ${b.demandOrg && b.demandOrg !== b.org ? `<span class="g2b-demand-org">수요: ${b.demandOrg}</span>` : ''}
+        ${b.demandOrg !== '-' && b.demandOrg !== b.org ? `<span class="g2b-demand-org">수요: ${b.demandOrg}</span>` : ''}
       </div>
       <div class="g2b-card-title">${b.title}</div>
       <div class="g2b-card-meta">
         <span>📋 공고번호: ${b.bidNtceNo}-${b.bidNtceOrd}</span>
-        <span>💰 추정가: ${g2bFmt(b.budget)}</span>
-        ${b.basePrice > 0 ? `<span>📊 기초금액: ${g2bFmt(b.basePrice)}</span>` : ''}
-        <span>📅 마감: ${b.deadline || b.bidEnd || '-'}</span>
+        <span>💰 추정가: <strong>${g2bFmt(b.presmptPrce)}</strong></span>
+        ${b.asignBdgtAmt > 0 ? `<span>📊 배정예산: ${g2bFmt(b.asignBdgtAmt)}</span>` : ''}
+        <span>📅 입찰시작: ${b.bidBeginDt !== '-' ? b.bidBeginDt : '-'}</span>
+        <span>⏰ 마감: <strong>${b.bidClseDt !== '-' ? b.bidClseDt : '-'}</strong></span>
+        ${b.opengDt !== '-' ? `<span>🔓 개찰: ${b.opengDt}</span>` : ''}
       </div>
       <div class="g2b-card-info">
-        <span>낙찰방법: ${b.bidMethod}</span>
-        <span>계약방법: ${b.contractMethod}</span>
-        ${b.openDate ? `<span>개찰일: ${b.openDate}</span>` : ''}
+        ${b.bidMethdNm     !== '-' ? `<span>입찰방식: ${b.bidMethdNm}</span>` : ''}
+        ${b.cntrctCnclsMthdNm !== '-' ? `<span>계약목적: ${b.cntrctCnclsMthdNm}</span>` : ''}
+        ${b.sucsfbidMthdNm !== '-' ? `<span>낙찰방법: ${b.sucsfbidMthdNm}</span>` : ''}
+        ${b.sucsfbidLwltRate !== '-' ? `<span>낙찰하한율: ${b.sucsfbidLwltRate}%</span>` : ''}
+        ${b.prearngPrceDcsnMthdNm !== '-' ? `<span>예정가결정: ${b.prearngPrceDcsnMthdNm}</span>` : ''}
+        ${b.totPrdprcNum !== '-' ? `<span>예가건수: ${b.totPrdprcNum}개 (추첨 ${b.drwtPrdprcNum}개)</span>` : ''}
+        ${b.pqEvalYn === 'Y' ? '<span class="g2b-tag">PQ심사</span>' : ''}
+        ${b.tpEvalYn === 'Y' ? '<span class="g2b-tag">TP심사</span>' : ''}
+        ${b.dsgntCmptYn === 'Y' ? '<span class="g2b-tag">지명경쟁</span>' : ''}
+        ${b.ofclNm !== '-' ? `<span>담당: ${b.ofclNm} ${b.ofclTel !== '-' ? '(' + b.ofclTel + ')' : ''}</span>` : ''}
       </div>
-      ${b.url ? `<div class="g2b-card-link"><a href="${b.url}" target="_blank">📄 공고문 보기 ↗</a></div>` : ''}
+      <div class="g2b-card-links">
+        ${b.bidNtceDtlUrl ? `<a href="${b.bidNtceDtlUrl}" target="_blank">📄 공고상세 ↗</a>` : ''}
+        ${b.docUrl ? `<a href="${b.docUrl}" target="_blank">📎 규격서 ↗</a>` : ''}
+      </div>
     </div>
   `).join('');
 
@@ -146,38 +160,33 @@ function renderG2bResPage() {
   const slice = items.slice(start, start + perPage);
 
   const html = slice.map(b => {
-    // 낙찰률 계산 (서버가 안 준 경우 직접 계산)
-    let rate = b.sucsfbidRate !== '-' ? b.sucsfbidRate : null;
-    if (!rate && b.presmptPrce > 0 && b.successBid > 0) {
-      rate = ((b.successBid / b.presmptPrce) * 100).toFixed(3) + '%';
-    }
-
-    // 예정가격 대비 낙찰금액 비율
-    let predtRate = null;
-    if (b.predtPrce > 0 && b.successBid > 0) {
-      predtRate = ((b.successBid / b.predtPrce) * 100).toFixed(3) + '%';
-    }
+    // 낙찰률 파싱 (문자열 또는 숫자)
+    const rateDisplay = b.sucsfbidRate !== '-'
+      ? (isNaN(parseFloat(b.sucsfbidRate)) ? b.sucsfbidRate : parseFloat(b.sucsfbidRate).toFixed(3) + '%')
+      : '-';
 
     return `
       <div class="g2b-card g2b-card-result">
         <div class="g2b-card-head">
           <span class="g2b-badge g2b-badge-result">낙찰</span>
           <span class="g2b-org">${b.org}</span>
+          ${b.demandOrg !== '-' && b.demandOrg !== b.org ? `<span class="g2b-demand-org">수요: ${b.demandOrg}</span>` : ''}
         </div>
         <div class="g2b-card-title">${b.title}</div>
         <div class="g2b-card-meta">
-          <span>📋 공고번호: ${b.bidNtceNo}</span>
-          <span>🏆 낙찰자: <strong>${b.successBidder}</strong></span>
-          <span>💰 낙찰금액: <strong class="g2b-amount">${g2bFmt(b.successBid)}</strong></span>
-          ${b.presmptPrce > 0 ? `<span>📊 추정가: ${g2bFmt(b.presmptPrce)}</span>` : ''}
-          ${b.predtPrce   > 0 ? `<span>🎯 예정가: ${g2bFmt(b.predtPrce)}</span>` : ''}
-          ${rate ? `<span>📈 낙찰률: <strong>${rate}</strong></span>` : ''}
-          ${predtRate ? `<span>📉 예정가 대비: ${predtRate}</span>` : ''}
+          <span>📋 공고번호: ${b.bidNtceNo}-${b.bidNtceOrd}</span>
+          <span>🏆 낙찰자: <strong>${b.bidwinnrNm}</strong></span>
+          <span>💰 낙찰금액: <strong class="g2b-amount">${g2bFmt(b.sucsfbidAmt)}</strong></span>
+          ${rateDisplay !== '-' ? `<span>📈 낙찰률: <strong>${rateDisplay}</strong></span>` : ''}
+          ${b.prtcptCnum !== '-' ? `<span>👥 참가업체: ${b.prtcptCnum}개사</span>` : ''}
         </div>
         <div class="g2b-card-info">
-          ${b.openDate     ? `<span>개찰일: ${b.openDate}</span>` : ''}
-          ${b.bidCloseDate ? `<span>마감일: ${b.bidCloseDate}</span>` : ''}
-          ${b.drwtPrceBas > 0 ? `<span>복수예비가 기초금액: ${g2bFmt(b.drwtPrceBas)}</span>` : ''}
+          ${b.rlOpengDt   !== '-' ? `<span>개찰일시: ${b.rlOpengDt}</span>` : ''}
+          ${b.fnlSucsfDate !== '-' ? `<span>낙찰일자: ${b.fnlSucsfDate}</span>` : ''}
+          ${b.rgstDt !== '-' ? `<span>등록일시: ${b.rgstDt}</span>` : ''}
+          ${b.bidwinnrBizno !== '-' ? `<span>사업자등록: ${b.bidwinnrBizno}</span>` : ''}
+          ${b.bidwinnrAdrs !== '-' ? `<span>주소: ${b.bidwinnrAdrs}</span>` : ''}
+          ${b.bidwinnrTelNo !== '-' ? `<span>전화: ${b.bidwinnrTelNo}</span>` : ''}
         </div>
       </div>
     `;

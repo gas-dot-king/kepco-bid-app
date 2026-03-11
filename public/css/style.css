@@ -709,3 +709,21 @@ input[type=range]::-webkit-slider-thumb {
   text-decoration: none;
 }
 .g2b-card-link a:hover { text-decoration: underline; }
+
+.g2b-card-links {
+  display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap;
+}
+.g2b-card-links a {
+  font-size: 12px; color: var(--blue);
+  text-decoration: none; padding: 3px 8px;
+  background: #eef3fb; border-radius: 4px;
+}
+.g2b-card-links a:hover { background: #d8e8f8; }
+
+.g2b-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 6px; border-radius: 3px;
+  background: #fff3cd; color: #856404;
+}
+.g2b-badge-renew { background: #fde8e8; color: var(--red); }
+.g2b-badge-intl  { background: #e8f5e9; color: #2e7d32; }

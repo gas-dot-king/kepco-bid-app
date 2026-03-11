@@ -226,54 +226,109 @@ function g2bDateStr(offsetDays = 0, endOfDay = false) {
   return ymd + (endOfDay ? '2359' : '0000');
 }
 
-// 나라장터 업무 구분 → 서비스 경로 매핑
+// 나라장터 업무 구분 → 서비스 경로 매핑 (PDF 기준 정확한 오퍼레이션명)
 const G2B_SERVICE = {
-  '용역': { bid: 'getBidPblancListInfoServc',     result: 'getBidResultListInfoServc'     },
-  '공사': { bid: 'getBidPblancListInfoCnstwk',    result: 'getBidResultListInfoCnstwk'    },
-  '물품': { bid: 'getBidPblancListInfoThng',      result: 'getBidResultListInfoThng'      },
-  '외자': { bid: 'getBidPblancListInfoFrgcpt',    result: 'getBidResultListInfoFrgcpt'    },
+  '용역': { bid: 'getBidPblancListInfoServc',      result: 'getScsbidListSttusServc'   },
+  '공사': { bid: 'getBidPblancListInfoCnstwk',     result: 'getScsbidListSttusCnstwk'  },
+  '물품': { bid: 'getBidPblancListInfoThng',       result: 'getScsbidListSttusThng'    },
+  '외자': { bid: 'getBidPblancListInfoFrgcpt',     result: 'getScsbidListSttusFrgcpt'  },
 };
 
-const G2B_BASE = 'https://apis.data.go.kr/1230000/BidPublicInfoService';
-const G2B_RESULT_BASE = 'https://apis.data.go.kr/1230000/BidResultInfoService';
+// PDF 기준 정확한 Base URL
+const G2B_BASE        = 'https://apis.data.go.kr/1230000/ad/BidPublicInfoService';
+const G2B_RESULT_BASE = 'https://apis.data.go.kr/1230000/as/ScsbidInfoService';
 
-// 입찰공고 정규화
+// 입찰공고 정규화 (PDF 기준 정확한 필드명)
 function normalizeG2bBid(item) {
+  // 공고규격서 URL (1번 우선, 최대 10개 중 첫 번째 유효한 것)
+  let docUrl = null;
+  for (let i = 1; i <= 10; i++) {
+    if (item[`ntceSpecDocUrl${i}`]) { docUrl = item[`ntceSpecDocUrl${i}`]; break; }
+  }
+
   return {
-    bidNtceNo     : item.bidNtceNo       ?? '-',
-    bidNtceOrd    : item.bidNtceOrd      ?? '-',
-    title         : item.bidNtceNm       ?? '-',
-    org           : item.ntceInsttNm     ?? '-',
-    demandOrg     : item.dminsttNm       ?? '-',
-    budget        : parseFloat(item.presmptPrce   ?? 0),   // 추정가격
-    basePrice     : parseFloat(item.bsamt         ?? 0),   // 기초금액
-    bidMethod     : item.bidMthdNm       ?? '-',
-    contractMethod: item.cntrctCnclsMthdNm ?? '-',
-    openDate      : item.opengDt         ?? '-',
-    bidBegin      : item.bidNtceBgn      ?? '-',
-    bidEnd        : item.bidNtceEnd      ?? '-',
-    deadline      : item.bidClsedt       ?? item.bidNtceEnd ?? '-',
-    industryType  : item.indstrytyCd     ?? '-',
-    ntceKindNm    : item.ntceKindNm      ?? '-',   // 공고종류
-    url           : item.ntceSpecDocUrl  ?? null,
+    // ── 식별 ──
+    bidNtceNo      : item.bidNtceNo          ?? '-',
+    bidNtceOrd     : item.bidNtceOrd         ?? '-',
+    title          : item.bidNtceNm          ?? '-',
+    ntceKindNm     : item.ntceKindNm         ?? '-',   // 공고종류명
+    rgstTyNm       : item.rgstTyNm           ?? '-',   // 등록유형명
+    reNtceYn       : item.reNtceYn           ?? '-',   // 재공고여부
+    intrbidYn      : item.intrbidYn          ?? '-',   // 국제입찰여부
+
+    // ── 기관 ──
+    org            : item.ntceInsttNm        ?? '-',   // 공고기관명
+    orgCd          : item.ntceInsttCd        ?? '-',   // 공고기관코드
+    demandOrg      : item.dminsttNm          ?? '-',   // 수요기관명
+    demandOrgCd    : item.dminsttCd          ?? '-',   // 수요기관코드
+    ofclNm         : item.ntceInsttOfclNm    ?? '-',   // 담당자명
+    ofclTel        : item.ntceInsttOfclTelNo ?? '-',   // 담당자전화
+    ofclEmail      : item.ntceInsttOfclEmailAdrs ?? '-', // 담당자이메일
+
+    // ── 금액 ──
+    presmptPrce    : parseFloat(item.presmptPrce    ?? 0),  // 추정가격
+    asignBdgtAmt   : parseFloat(item.asignBdgtAmt   ?? 0),  // 배정예산금액
+
+    // ── 방법 ──
+    bidMethdNm     : item.bidMethdNm         ?? '-',   // 입찰방식명
+    cntrctCnclsMthdNm: item.cntrctCnclsMthdNm ?? '-', // 계약체결방법명
+    sucsfbidMthdNm : item.sucsfbidMthdNm     ?? '-',  // 낙찰방법명
+    prearngPrceDcsnMthdNm: item.prearngPrceDcsnMthdNm ?? '-', // 예정가격결정방법명
+    sucsfbidLwltRate: item.sucsfbidLwltRate  ?? '-',  // 낙찰하한율
+
+    // ── 예가 건수 ──
+    totPrdprcNum   : item.totPrdprcNum       ?? '-',   // 총예가건수
+    drwtPrdprcNum  : item.drwtPrdprcNum      ?? '-',   // 추첨예가건수
+
+    // ── 일정 ──
+    bidNtceDt      : item.bidNtceDt          ?? '-',   // 입찰공고일시
+    bidBeginDt     : item.bidBeginDt         ?? '-',   // 입찰개시일시
+    bidClseDt      : item.bidClseDt          ?? '-',   // 입찰마감일시
+    opengDt        : item.opengDt            ?? '-',   // 개찰일시
+    opengPlce      : item.opengPlce          ?? '-',   // 개찰장소
+    rgstDt         : item.rgstDt             ?? '-',   // 등록일시
+
+    // ── 기타 ──
+    pqEvalYn       : item.pqEvalYn           ?? '-',   // PQ심사여부
+    tpEvalYn       : item.tpEvalYn           ?? '-',   // TP심사여부
+    dsgntCmptYn    : item.dsgntCmptYn        ?? '-',   // 지명경쟁여부
+    bidNtceDtlUrl  : item.bidNtceDtlUrl      ?? null,  // 입찰공고상세URL
+    docUrl,                                             // 공고규격서URL
   };
 }
 
-// 낙찰정보 정규화
+// 낙찰정보 정규화 (PDF 기준 정확한 필드명 - getScsbidListSttus*)
 function normalizeG2bResult(item) {
   return {
+    // ── 식별 ──
     bidNtceNo      : item.bidNtceNo        ?? '-',
+    bidNtceOrd     : item.bidNtceOrd       ?? '-',
+    bidClsfcNo     : item.bidClsfcNo       ?? '-',   // 입찰분류번호
+    rbidNo         : item.rbidNo           ?? '-',   // 재입찰번호
     title          : item.bidNtceNm        ?? '-',
-    org            : item.ntceInsttNm      ?? '-',
-    successBidder  : item.sucsfbidCorpNm   ?? '-',   // 낙찰자
-    successBid     : parseFloat(item.sucsfbidAmt  ?? 0),  // 낙찰금액
-    presmptPrce    : parseFloat(item.presmptPrce  ?? 0),  // 추정가격
-    basePrice      : parseFloat(item.bsamt        ?? 0),  // 기초금액
-    predtPrce      : parseFloat(item.predtPrce    ?? 0),  // 예정가격
-    sucsfbidRate   : item.sucsfbidRate     ?? '-',         // 낙찰률
-    openDate       : item.opengDt          ?? '-',
-    bidCloseDate   : item.bidClsedt        ?? '-',
-    drwtPrceBas    : parseFloat(item.drwtPrceBas  ?? 0),  // 복수예비가 기초금액
+    ntceDivCd      : item.ntceDivCd        ?? '-',   // 공고구분코드
+
+    // ── 기관 ──
+    org            : item.ntceInsttNm      ?? '-',   // 공고기관명  ※낙찰API엔 없을 수 있음
+    demandOrg      : item.dminsttNm        ?? '-',   // 수요기관명
+    demandOrgCd    : item.dminsttCd        ?? '-',
+
+    // ── 낙찰자 ──
+    bidwinnrNm     : item.bidwinnrNm       ?? '-',   // 최종낙찰업체명
+    bidwinnrBizno  : item.bidwinnrBizno    ?? '-',   // 사업자등록번호
+    bidwinnrCeoNm  : item.bidwinnrCeoNm    ?? '-',   // 대표자명
+    bidwinnrAdrs   : item.bidwinnrAdrs     ?? '-',   // 주소
+    bidwinnrTelNo  : item.bidwinnrTelNo    ?? '-',   // 전화번호
+    prtcptCnum     : item.prtcptCnum       ?? '-',   // 참가업체수
+
+    // ── 금액/율 ──
+    sucsfbidAmt    : parseFloat(item.sucsfbidAmt   ?? 0),  // 최종낙찰금액
+    sucsfbidRate   : item.sucsfbidRate     ?? '-',          // 최종낙찰률
+
+    // ── 일정 ──
+    rlOpengDt      : item.rlOpengDt        ?? '-',   // 실개찰일시
+    fnlSucsfDate   : item.fnlSucsfDate     ?? '-',   // 최종낙찰일자
+    rgstDt         : item.rgstDt           ?? '-',   // 등록일시
   };
 }
 
