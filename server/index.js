@@ -140,14 +140,7 @@ const COMPANIES = {
 
 app.get('/api/companies', (req, res) => res.json(COMPANIES));
 
-// ── 서버 상태 확인 (가벼운 헬스체크) ──
-app.get('/api/ping', (req, res) => {
-  res.json({
-    ok    : true,
-    kepco : !!process.env.KEPCO_API_KEY,
-    ts    : Date.now(),
-  });
-});
+// ── 서버 상태 확인 ──
 
 // ── 디버그 ──
 app.get('/api/debug', async (req, res) => {
@@ -221,11 +214,193 @@ app.get('/api/bids', async (req, res) => {
 });
 
 
+// ═══════════════════════════════════════════════
+// ── 나라장터(G2B) API ──────────────────────────
+// ═══════════════════════════════════════════════
+
+// 날짜 유틸 (YYYYMMDDHHmm 형식, 나라장터 API용)
+function g2bDateStr(offsetDays = 0, endOfDay = false) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  const ymd = d.toISOString().slice(0, 10).replace(/-/g, '');
+  return ymd + (endOfDay ? '2359' : '0000');
+}
+
+// 나라장터 업무 구분 → 서비스 경로 매핑
+const G2B_SERVICE = {
+  '용역': { bid: 'getBidPblancListInfoServc',     result: 'getBidResultListInfoServc'     },
+  '공사': { bid: 'getBidPblancListInfoCnstwk',    result: 'getBidResultListInfoCnstwk'    },
+  '물품': { bid: 'getBidPblancListInfoThng',      result: 'getBidResultListInfoThng'      },
+  '외자': { bid: 'getBidPblancListInfoFrgcpt',    result: 'getBidResultListInfoFrgcpt'    },
+};
+
+const G2B_BASE = 'https://apis.data.go.kr/1230000/BidPublicInfoService';
+const G2B_RESULT_BASE = 'https://apis.data.go.kr/1230000/BidResultInfoService';
+
+// 입찰공고 정규화
+function normalizeG2bBid(item) {
+  return {
+    bidNtceNo     : item.bidNtceNo       ?? '-',
+    bidNtceOrd    : item.bidNtceOrd      ?? '-',
+    title         : item.bidNtceNm       ?? '-',
+    org           : item.ntceInsttNm     ?? '-',
+    demandOrg     : item.dminsttNm       ?? '-',
+    budget        : parseFloat(item.presmptPrce   ?? 0),   // 추정가격
+    basePrice     : parseFloat(item.bsamt         ?? 0),   // 기초금액
+    bidMethod     : item.bidMthdNm       ?? '-',
+    contractMethod: item.cntrctCnclsMthdNm ?? '-',
+    openDate      : item.opengDt         ?? '-',
+    bidBegin      : item.bidNtceBgn      ?? '-',
+    bidEnd        : item.bidNtceEnd      ?? '-',
+    deadline      : item.bidClsedt       ?? item.bidNtceEnd ?? '-',
+    industryType  : item.indstrytyCd     ?? '-',
+    ntceKindNm    : item.ntceKindNm      ?? '-',   // 공고종류
+    url           : item.ntceSpecDocUrl  ?? null,
+  };
+}
+
+// 낙찰정보 정규화
+function normalizeG2bResult(item) {
+  return {
+    bidNtceNo      : item.bidNtceNo        ?? '-',
+    title          : item.bidNtceNm        ?? '-',
+    org            : item.ntceInsttNm      ?? '-',
+    successBidder  : item.sucsfbidCorpNm   ?? '-',   // 낙찰자
+    successBid     : parseFloat(item.sucsfbidAmt  ?? 0),  // 낙찰금액
+    presmptPrce    : parseFloat(item.presmptPrce  ?? 0),  // 추정가격
+    basePrice      : parseFloat(item.bsamt        ?? 0),  // 기초금액
+    predtPrce      : parseFloat(item.predtPrce    ?? 0),  // 예정가격
+    sucsfbidRate   : item.sucsfbidRate     ?? '-',         // 낙찰률
+    openDate       : item.opengDt          ?? '-',
+    bidCloseDate   : item.bidClsedt        ?? '-',
+    drwtPrceBas    : parseFloat(item.drwtPrceBas  ?? 0),  // 복수예비가 기초금액
+  };
+}
+
+// ── 나라장터 입찰공고 조회 ──
+app.get('/api/g2b/bids', async (req, res) => {
+  const {
+    keyword = '',
+    type    = '용역',
+    days    = 15,
+  } = req.query;
+
+  const apiKey = process.env.G2B_BID_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'G2B_BID_API_KEY 미설정 (.env 파일 확인)', items: [] });
+  }
+
+  const svcPath = G2B_SERVICE[type]?.bid ?? G2B_SERVICE['용역'].bid;
+
+  try {
+    const params = {
+      ServiceKey  : apiKey,
+      pageNo      : 1,
+      numOfRows   : 100,
+      type        : 'json',
+      inqryDiv    : 1,                          // 1=등록일시
+      inqryBgnDt  : g2bDateStr(-parseInt(days), false),
+      inqryEndDt  : g2bDateStr(0, true),
+    };
+
+    const r = await axios.get(`${G2B_BASE}/${svcPath}`, { params, timeout: 15000 });
+
+    let raw = [];
+    // 응답 구조: response.body.items (배열 또는 단일 객체)
+    const body = r.data?.response?.body;
+    if (body) {
+      const items = body.items?.item ?? body.items ?? [];
+      raw = Array.isArray(items) ? items : [items];
+    }
+
+    const filtered = keyword
+      ? raw.filter(i => (i.bidNtceNm ?? '').includes(keyword))
+      : raw;
+
+    return res.json({
+      total: body?.totalCount ?? filtered.length,
+      items: filtered.map(normalizeG2bBid),
+    });
+
+  } catch (err) {
+    console.error('[G2B BID]', err.response?.status, err.message);
+    return res.status(502).json({
+      error: `나라장터 API 오류(${err.response?.status ?? err.code}): ${err.message}`,
+      items: [],
+    });
+  }
+});
+
+// ── 나라장터 낙찰정보 조회 ──
+app.get('/api/g2b/results', async (req, res) => {
+  const {
+    keyword = '',
+    type    = '용역',
+    days    = 15,
+  } = req.query;
+
+  const apiKey = process.env.G2B_RESULT_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'G2B_RESULT_API_KEY 미설정 (.env 파일 확인)', items: [] });
+  }
+
+  const svcPath = G2B_SERVICE[type]?.result ?? G2B_SERVICE['용역'].result;
+
+  try {
+    const params = {
+      ServiceKey  : apiKey,
+      pageNo      : 1,
+      numOfRows   : 100,
+      type        : 'json',
+      inqryDiv    : 1,
+      inqryBgnDt  : g2bDateStr(-parseInt(days), false),
+      inqryEndDt  : g2bDateStr(0, true),
+    };
+
+    const r = await axios.get(`${G2B_RESULT_BASE}/${svcPath}`, { params, timeout: 15000 });
+
+    let raw = [];
+    const body = r.data?.response?.body;
+    if (body) {
+      const items = body.items?.item ?? body.items ?? [];
+      raw = Array.isArray(items) ? items : [items];
+    }
+
+    const filtered = keyword
+      ? raw.filter(i => (i.bidNtceNm ?? '').includes(keyword))
+      : raw;
+
+    return res.json({
+      total: body?.totalCount ?? filtered.length,
+      items: filtered.map(normalizeG2bResult),
+    });
+
+  } catch (err) {
+    console.error('[G2B RESULT]', err.response?.status, err.message);
+    return res.status(502).json({
+      error: `나라장터 낙찰정보 API 오류(${err.response?.status ?? err.code}): ${err.message}`,
+      items: [],
+    });
+  }
+});
+
+// ── ping 업데이트 (G2B 키 상태 포함) ──
+app.get('/api/ping', (req, res) => {
+  res.json({
+    ok    : true,
+    kepco : !!process.env.KEPCO_API_KEY,
+    g2b   : !!(process.env.G2B_BID_API_KEY || process.env.G2B_RESULT_API_KEY),
+    ts    : Date.now(),
+  });
+});
+
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
 
 app.listen(PORT, () => {
   console.log(`\n🔌 서버 실행 중: http://localhost:${PORT}`);
   console.log(`⚡ 한전 bigdata API: ${process.env.KEPCO_API_KEY ? '✅ 키 있음' : '❌ 키 없음'}`);
+  console.log(`🏛️  나라장터 입찰공고 API: ${process.env.G2B_BID_API_KEY ? '✅ 키 있음' : '❌ 키 없음'}`);
+  console.log(`🏆 나라장터 낙찰정보 API: ${process.env.G2B_RESULT_API_KEY ? '✅ 키 있음' : '❌ 키 없음'}`);
   console.log(`🔍 디버그: http://localhost:${PORT}/api/debug\n`);
 });
 

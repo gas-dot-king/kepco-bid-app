@@ -12,7 +12,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     const data = await res.json();
     if (!data.ok) throw new Error('서버 오류');
     const kepco  = data.kepco  ? '✅ 한전API' : '❌ 한전API없음';
-    badge.textContent = `● 서버 연결됨 · ${kepco}`;
+    const g2b    = data.g2b    ? ' · ✅ 나라장터API' : ' · ❌ 나라장터API없음';
+    badge.textContent = `● 서버 연결됨 · ${kepco}${g2b}`;
     badge.classList.add('ok');
   } catch (e) {
     badge.textContent = '● 서버 오류: ' + e.message;
@@ -35,7 +36,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ── TABS ──
-const TAB_NAMES = ['search','simulate'];
+const TAB_NAMES = ['search','simulate','g2b'];
 function switchTab(name) {
   TAB_NAMES.forEach((n, i) => {
     document.querySelectorAll('.tab-btn')[i].classList.toggle('active', n === name);

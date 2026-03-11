@@ -603,3 +603,109 @@ input[type=range]::-webkit-slider-thumb {
   font-size: 11px; font-family: var(--mono); color: var(--ink2);
   border: 1px solid var(--border);
 }
+
+/* ══════════════════════════════════════════════
+   나라장터 탭 스타일
+══════════════════════════════════════════════ */
+
+/* 서브탭 */
+.g2b-subtabs {
+  display: flex; gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0;
+}
+.g2b-subtab {
+  padding: 10px 20px;
+  border: none; background: none;
+  font-size: 13px; font-weight: 600;
+  color: var(--ink2); cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all .15s;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.g2b-subtab:hover { color: var(--blue); }
+.g2b-subtab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+.g2b-tab-content { display: none; }
+.g2b-tab-content.active { display: block; }
+
+/* 상태 메시지 */
+.g2b-status {
+  padding: 10px 14px; border-radius: 8px;
+  font-size: 13px; margin: 8px 0;
+  display: flex; align-items: center; gap: 6px;
+}
+.g2b-status-info    { background: #eef3fb; color: var(--blue); }
+.g2b-status-success { background: #e8f5e9; color: #2e7d32; }
+.g2b-status-error   { background: #fde8e8; color: var(--red); }
+
+/* 스피너 (인라인) */
+.g2b-spin {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid var(--blue); border-top-color: transparent;
+  border-radius: 50%; animation: spin .7s linear infinite;
+  flex-shrink: 0;
+}
+
+/* 공고 카드 */
+.g2b-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: box-shadow .15s;
+}
+.g2b-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); }
+.g2b-card-result { border-left: 4px solid #2e7d32; }
+
+.g2b-card-head {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.g2b-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: #eef3fb; color: var(--blue);
+}
+.g2b-badge-result {
+  background: #e8f5e9; color: #2e7d32;
+}
+.g2b-org {
+  font-size: 12px; font-weight: 700; color: var(--ink2);
+}
+.g2b-demand-org {
+  font-size: 11px; color: var(--ink3);
+}
+
+.g2b-card-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--ink); margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.g2b-card-meta {
+  display: flex; flex-wrap: wrap; gap: 8px 16px;
+  font-size: 12px; color: var(--ink2);
+  margin-bottom: 6px;
+}
+.g2b-card-meta strong { color: var(--ink); }
+.g2b-amount { color: var(--red); }
+
+.g2b-card-info {
+  display: flex; flex-wrap: wrap; gap: 6px 14px;
+  font-size: 11px; color: var(--ink3);
+  font-family: var(--mono);
+}
+
+.g2b-card-link {
+  margin-top: 8px;
+}
+.g2b-card-link a {
+  font-size: 12px; color: var(--blue);
+  text-decoration: none;
+}
+.g2b-card-link a:hover { text-decoration: underline; }

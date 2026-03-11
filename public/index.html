@@ -11,18 +11,18 @@
 <div class="wrap">
 
   <header>
-    <div class="hd-sub">한전 빅데이터 API 연동 · 실시간</div>
+    <div class="hd-sub">한전 빅데이터 API · 조달청 나라장터 API 연동 · 실시간</div>
     <div class="hd-title">입찰 통합 조회 및 분석 프로그램</div>
     <div class="server-badge" id="serverBadge">● 연결 확인 중...</div>
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('search')">🔍 공고 조회</button>
+    <button class="tab-btn active" onclick="switchTab('search')">🏭 한전 공고 조회</button>
     <button class="tab-btn" onclick="switchTab('simulate')">🎯 투찰가 시뮬레이션</button>
-
+    <button class="tab-btn" onclick="switchTab('g2b')">🏛️ 나라장터 공고·낙찰 조회</button>
   </div>
 
-  <!-- ═══ 공고 조회 탭 ═══ -->
+  <!-- ═══ 한전 공고 조회 탭 ═══ -->
   <div class="tab-content active" id="tab-search">
     <div class="panel">
       <div class="panel-head"><span class="badge">1</span> 검색 조건</div>
@@ -183,13 +183,95 @@
 
   </div>
 
+  <!-- ═══ 나라장터 공고·낙찰 조회 탭 ═══ -->
+  <div class="tab-content" id="tab-g2b">
 
+    <!-- 서브 탭 -->
+    <div class="g2b-subtabs">
+      <button class="g2b-subtab active" onclick="switchG2bTab('bid')">📋 입찰공고 조회</button>
+      <button class="g2b-subtab" onclick="switchG2bTab('result')">🏆 낙찰 정보 조회</button>
+    </div>
 
+    <!-- ── 입찰공고 서브탭 ── -->
+    <div class="g2b-tab-content active" id="g2b-tab-bid">
+      <div class="panel">
+        <div class="panel-head"><span class="badge">1</span> 입찰공고 검색 조건</div>
+        <div class="panel-body">
+          <div class="row3">
+            <div class="field">
+              <label>검색어 (공고명)</label>
+              <input type="text" id="g2b-keyword" placeholder="보온, 단열, 전기공사...">
+            </div>
+            <div class="field">
+              <label>업무 구분</label>
+              <select id="g2b-type">
+                <option value="용역">용역</option>
+                <option value="공사">공사</option>
+                <option value="물품">물품</option>
+                <option value="외자">외자</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>조회 기간</label>
+              <select id="g2b-days">
+                <option value="7">최근 7일</option>
+                <option value="15" selected>최근 15일</option>
+                <option value="30">최근 30일</option>
+                <option value="60">최근 60일</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="searchG2bBids()">🔍 입찰공고 조회</button>
+        </div>
+      </div>
+      <div id="g2b-bid-status"></div>
+      <div id="g2b-bid-results"></div>
+      <div id="g2b-bid-pager"></div>
+    </div>
 
+    <!-- ── 낙찰정보 서브탭 ── -->
+    <div class="g2b-tab-content" id="g2b-tab-result">
+      <div class="panel">
+        <div class="panel-head"><span class="badge">1</span> 낙찰정보 검색 조건</div>
+        <div class="panel-body">
+          <div class="row3">
+            <div class="field">
+              <label>검색어 (공고명)</label>
+              <input type="text" id="g2b-res-keyword" placeholder="보온, 단열, 전기공사...">
+            </div>
+            <div class="field">
+              <label>업무 구분</label>
+              <select id="g2b-res-type">
+                <option value="용역">용역</option>
+                <option value="공사">공사</option>
+                <option value="물품">물품</option>
+                <option value="외자">외자</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>조회 기간 (개찰일 기준)</label>
+              <select id="g2b-res-days">
+                <option value="7">최근 7일</option>
+                <option value="15" selected>최근 15일</option>
+                <option value="30">최근 30일</option>
+                <option value="60">최근 60일</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="searchG2bResults()">🏆 낙찰정보 조회</button>
+        </div>
+      </div>
+      <div id="g2b-res-status"></div>
+      <div id="g2b-res-results"></div>
+      <div id="g2b-res-pager"></div>
+    </div>
+
+  </div><!-- /tab-g2b -->
 
 </div>
 <script src="/js/engine.js"></script>
 <script src="/js/simulate.js"></script>
 <script src="/js/app.js"></script>
+<script src="/js/g2b.js"></script>
 </body>
 </html>
